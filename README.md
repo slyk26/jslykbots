@@ -12,7 +12,7 @@ trying out a monorepo architecture to create discontinued Discord Bots
 
 ### setup db
 
-run `setup.sh` [found here](./db_setup/) to boot up the db and create the tables in it automatically
+run `setup.sh` [found here](./db_setup) to boot up the db and create the tables in it automatically
 
 ### .env file - so I don't get dementia
 

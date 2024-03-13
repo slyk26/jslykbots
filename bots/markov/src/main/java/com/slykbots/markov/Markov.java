@@ -21,12 +21,9 @@ public class Markov {
         DB.healthcheck();
 
         builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
-        builder.addEventListeners(new ReadyListener(e -> logger.debug("Ready called")));
+        builder.addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())));
         builder.addEventListeners(new MessageListener(service::handleMarkovChains));
-        // Disable parts of the cache
-        builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE);
-        // Enable the bulk delete event
-        builder.setBulkDeleteSplittingEnabled(false);
+        builder.disableCache(CacheFlag.MEMBER_OVERRIDES);
         // Set activity (like "playing Something")
         builder.setActivity(Activity.customStatus("Forsen"));
 

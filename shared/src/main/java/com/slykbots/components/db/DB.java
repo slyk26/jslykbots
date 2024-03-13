@@ -31,7 +31,7 @@ public class DB {
 
         try (var c = DB.connect()) {
             if (c != null) {
-                logger.info("{} Database reachable at {}", where, DBConfig.getUrl());
+                logger.info("{} Database online at {}", where, DBConfig.getUrl());
                 logger.debug("{} Driver: {}", where, c.getClientInfo());
             } else {
                 logger.error("{} Can reach Database but cannot create Connection", where);

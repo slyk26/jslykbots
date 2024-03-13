@@ -1,4 +1,4 @@
-package com.slykbots.components.db.service;
+package com.slykbots.components.db.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
