@@ -1,6 +1,6 @@
 package com.slykbots.components.util;
 
-import com.slykbots.components.db.MissingEnvVarsException;
+import com.slykbots.components.exceptions.MissingEnvVarsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class EnvLoader {
                 .filter(v -> v.getKey().startsWith(config)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (!Helper.mapHasKeys(vars, requiredKeys)) {
-            logger.error("DBConfig is missing keys. Make sure these Environment Variables are set: {}", requiredKeys);
+            logger.error("{} is missing keys. Make sure these Environment Variables are set: {}", config, requiredKeys);
             throw new MissingEnvVarsException(String.format("Could not find all required Env variables. Needed: %s Found: %s", requiredKeys.size(), set.size()));
         }
 

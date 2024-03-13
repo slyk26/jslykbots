@@ -1,4 +1,4 @@
-package com.slykbots.components.db;
+package com.slykbots.components.exceptions;
 
 public class MissingEnvVarsException extends RuntimeException {
     public MissingEnvVarsException(String message) {
