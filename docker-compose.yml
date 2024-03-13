@@ -1,0 +1,12 @@
+services:
+  db:
+    container_name: slykbots-db
+    restart: always
+    image: postgres:15
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./db/postgres.db:/var/lib/postgresql/data

@@ -1,7 +1,9 @@
 package com.slykbots.markov;
 
+import com.slykbots.components.db.DB;
 import com.slykbots.components.listeners.MessageListener;
 import com.slykbots.components.listeners.ReadyListener;
+import com.slykbots.components.util.EnvLoader;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -16,8 +18,10 @@ public class Markov {
     private static final Logger logger = LoggerFactory.getLogger(Markov.class);
 
     public static void main(String[] args) {
-        JDABuilder builder = JDABuilder.createDefault(args[0]);
+        JDABuilder builder = JDABuilder.createDefault(EnvLoader.getVar("MARKOV_KEY"));
         builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
+
+        DB.healthcheck();
 
         builder.addEventListeners(new ReadyListener(e -> logger.debug("Ready called")));
         builder.addEventListeners(new MessageListener(Markov::resendMessage));

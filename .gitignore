@@ -37,4 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 
+# sensitive data file :flushE:
+.env
 
+# postgres docker image volume
+db/postgres.db
