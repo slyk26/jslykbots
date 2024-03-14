@@ -34,7 +34,7 @@ public class DB {
                 logger.info("{} Database online at {}", where, DBConfig.getUrl());
                 logger.debug("{} Driver: {}", where, c.getClientInfo());
             } else {
-                logger.error("{} Can reach Database but cannot create Connection", where);
+                logger.error("{} Cannot get connection", where);
             }
         } catch (SQLException e) {
             logger.error("{} Cannot reach Database: {}", where, e.getMessage());

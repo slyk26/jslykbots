@@ -26,8 +26,8 @@ public abstract class SlashCommand extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (!event.getName().equals(this.getName())) return;
-        this.execute(event);
+        if (event.getName().equals(this.getName()))
+            this.execute(event);
     }
 
     public abstract void execute(SlashCommandInteraction event);

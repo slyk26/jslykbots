@@ -4,7 +4,8 @@ trying out a monorepo architecture to create discontinued Discord Bots
 
 ### Planned
 
-- [ ] Markov bot
+- [x] Markov bot
+- [ ] Generic Settings for Bots to handle Bot specific settings (db, etc.)
 - [ ] Music bot (similar to Rhytmn Bot)
 - [ ] Utility Bot (Polls, Confessions and whatnot)
 - [ ] AI Integration somewhere

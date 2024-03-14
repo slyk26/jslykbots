@@ -3,7 +3,7 @@ package com.slykbots.markov.chains;
 import lombok.Data;
 
 @Data
-public class MarkovEntry {
+public class MarkovToken {
     private int id;
     private String guildId;
     private String currentWord;

@@ -11,7 +11,7 @@ import java.util.Random;
 public class MarkovService {
     private static final Logger logger = LoggerFactory.getLogger(MarkovService.class);
     private final MarkovDao dao;
-    private static final int MINIUM_PARTS = 3;
+    private static final int MINIMUM_PARTS = 3;
     private final Random r = new Random();
 
     public MarkovService() {
@@ -20,6 +20,11 @@ public class MarkovService {
 
     public void handleMarkovChains(MessageReceivedEvent e) {
         var msg = e.getMessage().getContentDisplay();
+
+        // ignore attachment only messages
+        if(msg.isBlank())
+            return;
+
         var server = e.getGuild().getId();
 
         if (e.isFromGuild() && !e.getAuthor().isBot() && !Helper.isBotMentioned(e.getMessage()))
@@ -42,17 +47,17 @@ public class MarkovService {
             var m = this.dao.getExistingCombination(curr, next, server);
 
             if (m != null) {
-                logger.debug("found entry: {}", m);
+                logger.debug("found token: {}", m);
                 m.setFrequency(m.getFrequency() + 1);
                 this.dao.update(m);
             } else {
-                var n = new MarkovEntry();
+                var n = new MarkovToken();
                 n.setFrequency(1);
                 n.setCurrentWord(curr);
                 n.setNextWord(next);
                 n.setGuildId(server);
                 var id = this.dao.create(n);
-                logger.debug("Created Entry Id={}: {}", id, n);
+                logger.debug("Created token Id={}: {}", id, n);
             }
         }
     }
@@ -64,20 +69,28 @@ public class MarkovService {
 
         StringBuilder msg = new StringBuilder();
         var parts = 0;
-        var entry = this.dao.getRandom(guildId);
+        var token = this.dao.getRandom(guildId);
 
         while (msg.length() < 2000) {
-            msg.append(entry.getCurrentWord());
+            msg.append(token.getCurrentWord());
             msg.append(" ");
             parts += 1;
-            if (entry.getNextWord() != null) {
-                entry = this.dao.getNext(entry.getNextWord(), guildId);
-            } else if (parts <= MINIUM_PARTS) {
-                entry = this.dao.getRandom(guildId);
+            if (token.getNextWord() != null) {
+                token = this.dao.getNext(token.getNextWord(), guildId);
+            } else if (parts <= MINIMUM_PARTS) {
+                token = this.dao.getRandom(guildId);
             } else {
                 return msg.toString();
             }
         }
         return msg.toString();
+    }
+
+    public long getTotalTokens(){
+        return this.dao.getTotalTokens();
+    }
+
+    public long getTotalTokensOfGuild(String guildId) {
+        return this.dao.getTotalTokensOfGuild(guildId);
     }
 }

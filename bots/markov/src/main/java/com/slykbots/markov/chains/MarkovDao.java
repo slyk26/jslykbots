@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class MarkovDao extends Dao<MarkovEntry> {
+public class MarkovDao extends Dao<MarkovToken> {
 
     private final Random r = new Random();
 
     @Override
-    public int create(MarkovEntry m) {
+    public int create(MarkovToken m) {
         String sql = "insert into markov_data(guild_id, current_word, next_word, frequency) values(?,?,?,?) returning id";
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, m.getGuildId());
@@ -26,26 +26,26 @@ public class MarkovDao extends Dao<MarkovEntry> {
             rs.next();
             return rs.getInt(1);
         } catch (SQLException | NullPointerException e) {
-            logger.error("Cannot insert MarkovEntry {}: {}", m, e.getMessage());
+            logger.error("Cannot insert MarkovToken {}: {}", m, e.getMessage());
             return -1;
         }
     }
 
     @Override
-    public MarkovEntry read(int id) {
+    public MarkovToken read(int id) {
         String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where id = ?";
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setInt(1, id);
             var rs = stmt.executeQuery();
             return this.mapSingleRs(rs);
         } catch (SQLException | NullPointerException e) {
-            logger.error("Cannot read MarkovEntry {}: {}", id, e.getMessage());
+            logger.error("Cannot read MarkovToken {}: {}", id, e.getMessage());
             return null;
         }
     }
 
     @Override
-    public void update(MarkovEntry m) {
+    public void update(MarkovToken m) {
         String sql = "update markov_data set guild_id = ?, current_word = ?, next_word = ?, frequency = ? where id = ?";
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, m.getGuildId());
@@ -56,25 +56,25 @@ public class MarkovDao extends Dao<MarkovEntry> {
             if (stmt.executeUpdate() > 1)
                 logger.warn("More than one entry has been updated: {}", m);
         } catch (SQLException | NullPointerException e) {
-            logger.error("Cannot update MarkovEntry {}: {}", m, e.getMessage());
+            logger.error("Cannot update MarkovToken {}: {}", m, e.getMessage());
         }
     }
 
     @Override
-    public MarkovEntry delete(int id) {
+    public MarkovToken delete(int id) {
         String sql = "delete from markov_data where id = ? returning id, guild_id, current_word, next_word, frequency";
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setInt(1, id);
             var rs = stmt.executeQuery();
             return this.mapSingleRs(rs);
         } catch (SQLException | NullPointerException e) {
-            logger.error("Cannot delete MarkovEntry {}: {}", id, e.getMessage());
+            logger.error("Cannot delete MarkovToken {}: {}", id, e.getMessage());
             return null;
         }
     }
 
     @Override
-    public List<MarkovEntry> list() {
+    public List<MarkovToken> list() {
         String sql = "select id, guild_id, current_word, next_word, frequency from markov_data";
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             var rs = stmt.executeQuery();
@@ -86,8 +86,8 @@ public class MarkovDao extends Dao<MarkovEntry> {
     }
 
     @Override
-    protected MarkovEntry mapSingleRs(ResultSet rs) throws SQLException {
-        MarkovEntry m = new MarkovEntry();
+    protected MarkovToken mapSingleRs(ResultSet rs) throws SQLException {
+        MarkovToken m = new MarkovToken();
         m.setId(rs.getInt(1));
         m.setGuildId(rs.getString(2));
         m.setCurrentWord(rs.getString(3));
@@ -96,11 +96,11 @@ public class MarkovDao extends Dao<MarkovEntry> {
         return m;
     }
 
-    public MarkovEntry getExistingCombination(String currentWord, String nextWord, String guildId) {
+    public MarkovToken getExistingCombination(String currentWord, String nextWord, String guildId) {
         String comparison = nextWord != null ? "= ?" : "is null";
         String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where current_word = ? and next_word " + comparison + " and guild_id = ?";
         logger.debug("{}, {}, {}", currentWord, nextWord, guildId);
-        MarkovEntry retVal = null;
+        MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, currentWord);
             if (nextWord != null)
@@ -132,9 +132,9 @@ public class MarkovDao extends Dao<MarkovEntry> {
         return retVal;
     }
 
-    public MarkovEntry getRandom(String guildId) {
+    public MarkovToken getRandom(String guildId) {
         String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where guild_id = ? order by random() limit 1";
-        MarkovEntry retVal = null;
+        MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, guildId);
             var rs = stmt.executeQuery();
@@ -147,16 +147,16 @@ public class MarkovDao extends Dao<MarkovEntry> {
         return retVal;
     }
 
-    public MarkovEntry getNext(String newCurrentWord, String guildId) {
+    public MarkovToken getNext(String newCurrentWord, String guildId) {
         String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where current_word = ? and guild_id = ? order by frequency desc";
-        MarkovEntry retVal = null;
+        MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, newCurrentWord);
             stmt.setString(2, guildId);
             var rs = stmt.executeQuery();
             var ms = this.mapRs(rs);
             logger.debug("{}", ms);
-            var freqs = ms.stream().map(MarkovEntry::getFrequency).mapToInt(i -> i).sum();
+            var freqs = ms.stream().map(MarkovToken::getFrequency).mapToInt(i -> i).sum();
             logger.debug("freqs: {}", freqs);
             retVal = findNext(ms, r.nextInt(freqs));
             logger.debug("getNext: {}", retVal);
@@ -167,16 +167,41 @@ public class MarkovDao extends Dao<MarkovEntry> {
         return retVal;
     }
 
-    private MarkovEntry findNext(List<MarkovEntry> l, int freqs) {
+    private MarkovToken findNext(List<MarkovToken> l, int freqs) {
         var sum = 0;
 
         logger.debug("sum start {}, freqs {}", sum, freqs);
 
-        for (MarkovEntry e : l) {
+        for (MarkovToken e : l) {
             if (sum + e.getFrequency() > freqs) {
                 return e;
             }
         }
         return null;
+    }
+
+    public long getTotalTokens() {
+        String sql = "select count(*) from markov_data;";
+        try(var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)){
+            var rs = stmt.executeQuery();
+            rs.next();
+            return rs.getLong(1);
+        } catch (SQLException e) {
+            logger.error("Cannot get total: {}", e.getMessage());
+            return -1;
+        }
+    }
+
+    public long getTotalTokensOfGuild(String guildId) {
+        String sql = "select count(*) from markov_data where guild_id = ?;";
+        try(var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)){
+            stmt.setString(1, guildId);
+            var rs = stmt.executeQuery();
+            rs.next();
+            return rs.getLong(1);
+        } catch (SQLException e) {
+            logger.error("Cannot get server {} total: {}", guildId, e.getMessage());
+            return -1;
+        }
     }
 }
