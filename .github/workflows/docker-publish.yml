@@ -24,5 +24,5 @@ jobs:
 
       - name: 'Build and Publish Markov Image'
         run: |
-          docker build . --tag ghcr.io/slyk26/markov:latest
+          docker build bots/docker --tag ghcr.io/slyk26/markov:latest
           docker push ghcr.io/slyk26/markov:latest
