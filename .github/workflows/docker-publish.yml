@@ -43,7 +43,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Image for Markov
         id: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           file: bots/markov/Dockerfile
           context: .
