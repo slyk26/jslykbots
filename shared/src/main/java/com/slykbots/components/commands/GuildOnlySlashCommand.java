@@ -1,6 +1,5 @@
 package com.slykbots.components.commands;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
@@ -21,7 +20,7 @@ public abstract class GuildOnlySlashCommand extends SlashCommand {
         }
     }
 
-    protected Guild getGuild(SlashCommandInteraction e) {
-        return Objects.requireNonNull(e.getGuild());
+    protected String getGuildId(SlashCommandInteraction e) {
+        return Objects.requireNonNull(e.getGuild()).getId();
     }
 }

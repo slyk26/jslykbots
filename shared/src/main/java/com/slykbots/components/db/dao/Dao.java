@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Dao<T> implements IDao<T> {
+public abstract class Dao<T, U> implements IDao<T, U> {
     protected static final Logger logger = LoggerFactory.getLogger(Dao.class);
 
     protected abstract T mapSingleRs(ResultSet rs) throws SQLException;

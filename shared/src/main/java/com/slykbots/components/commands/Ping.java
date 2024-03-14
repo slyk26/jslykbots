@@ -1,6 +1,5 @@
-package com.slykbots.markov.slashcommands;
+package com.slykbots.components.commands;
 
-import com.slykbots.components.commands.SlashCommand;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class Ping extends SlashCommand {

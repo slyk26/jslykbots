@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class MarkovDao extends Dao<MarkovToken> {
+public class MarkovDao extends Dao<MarkovToken, Integer> {
 
     private final Random r = new Random();
 
@@ -32,7 +32,7 @@ public class MarkovDao extends Dao<MarkovToken> {
     }
 
     @Override
-    public MarkovToken read(int id) {
+    public MarkovToken read(Integer id) {
         String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where id = ?";
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -132,11 +132,14 @@ public class MarkovDao extends Dao<MarkovToken> {
         return retVal;
     }
 
-    public MarkovToken getRandom(String guildId) {
-        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where guild_id = ? order by random() limit 1";
+    /// ignore conditional preparedStatement Warning
+    @SuppressWarnings("java:S2695")
+    public MarkovToken getRandom(String guildId, boolean fromGlobal) {
+        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data" + (fromGlobal ? " " : " where guild_id = ?") + " order by random() limit 1";
         MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
-            stmt.setString(1, guildId);
+            if (!fromGlobal)
+                stmt.setString(1, guildId);
             var rs = stmt.executeQuery();
             rs.next();
             retVal = this.mapSingleRs(rs);
@@ -147,15 +150,18 @@ public class MarkovDao extends Dao<MarkovToken> {
         return retVal;
     }
 
-    public MarkovToken getNext(String newCurrentWord, String guildId) {
-        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where current_word = ? and guild_id = ? order by frequency desc";
+    /// ignore conditional preparedStatement Warning
+    @SuppressWarnings("java:S2695")
+    public MarkovToken getNext(String newCurrentWord, String guildId, boolean fromGlobal) {
+        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where current_word = ?" + (fromGlobal ? " " : "and guild_id = ?") + " order by frequency desc";
         MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, newCurrentWord);
-            stmt.setString(2, guildId);
+            if (!fromGlobal)
+                stmt.setString(2, guildId);
             var rs = stmt.executeQuery();
             var ms = this.mapRs(rs);
-            logger.debug("{}", ms);
+            logger.debug("resultset: {}", ms);
             var freqs = ms.stream().map(MarkovToken::getFrequency).mapToInt(i -> i).sum();
             logger.debug("freqs: {}", freqs);
             retVal = findNext(ms, r.nextInt(freqs));
@@ -173,16 +179,18 @@ public class MarkovDao extends Dao<MarkovToken> {
         logger.debug("sum start {}, freqs {}", sum, freqs);
 
         for (MarkovToken e : l) {
-            if (sum + e.getFrequency() > freqs) {
+            sum += e.getFrequency();
+            if (sum > freqs) {
                 return e;
             }
         }
+        logger.error("Error determining next Token");
         return null;
     }
 
     public long getTotalTokens() {
         String sql = "select count(*) from markov_data;";
-        try(var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)){
+        try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             var rs = stmt.executeQuery();
             rs.next();
             return rs.getLong(1);
@@ -194,7 +202,7 @@ public class MarkovDao extends Dao<MarkovToken> {
 
     public long getTotalTokensOfGuild(String guildId) {
         String sql = "select count(*) from markov_data where guild_id = ?;";
-        try(var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)){
+        try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, guildId);
             var rs = stmt.executeQuery();
             rs.next();

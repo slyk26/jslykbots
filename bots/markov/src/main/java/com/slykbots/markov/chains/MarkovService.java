@@ -1,6 +1,8 @@
 package com.slykbots.markov.chains;
 
+import com.slykbots.components.settings.SettingService;
 import com.slykbots.components.util.Helper;
+import com.slykbots.markov.Markov;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,18 +13,21 @@ import java.util.Random;
 public class MarkovService {
     private static final Logger logger = LoggerFactory.getLogger(MarkovService.class);
     private final MarkovDao dao;
+
+    private final SettingService ss;
     private static final int MINIMUM_PARTS = 3;
     private final Random r = new Random();
 
     public MarkovService() {
         this.dao = new MarkovDao();
+        this.ss = new SettingService();
     }
 
     public void handleMarkovChains(MessageReceivedEvent e) {
         var msg = e.getMessage().getContentDisplay();
 
         // ignore attachment only messages
-        if(msg.isBlank())
+        if (msg.isBlank())
             return;
 
         var server = e.getGuild().getId();
@@ -37,6 +42,10 @@ public class MarkovService {
     }
 
     private void destructMessage(String msg, String server) {
+        boolean learn = Boolean.parseBoolean(this.ss.getSetting(server, Markov.LEARN_KEY));
+
+        if (!learn) return;
+
         List<String> parts = List.of(msg.split(" "));
 
         for (int i = 0; i < parts.size(); i++) {
@@ -63,22 +72,25 @@ public class MarkovService {
     }
 
     private String generateMessage(String guildId) {
-        if (this.dao.getCount(guildId) < 1337) {
+        boolean fromGlobal = Boolean.parseBoolean(this.ss.getSetting(guildId, Markov.USE_GLOBAL_KEY));
+
+        logger.debug("guild: {} global: {}", guildId, fromGlobal);
+
+        if (this.dao.getCount(guildId) < 1337 && !fromGlobal) {
             return "me not smart enough";
         }
 
         StringBuilder msg = new StringBuilder();
         var parts = 0;
-        var token = this.dao.getRandom(guildId);
+        var token = this.dao.getRandom(guildId, fromGlobal);
 
         while (msg.length() < 2000) {
-            msg.append(token.getCurrentWord());
-            msg.append(" ");
+            msg.append(token.getCurrentWord()).append(" ");
             parts += 1;
             if (token.getNextWord() != null) {
-                token = this.dao.getNext(token.getNextWord(), guildId);
+                token = this.dao.getNext(token.getNextWord(), guildId, fromGlobal);
             } else if (parts <= MINIMUM_PARTS) {
-                token = this.dao.getRandom(guildId);
+                token = this.dao.getRandom(guildId, fromGlobal);
             } else {
                 return msg.toString();
             }
@@ -86,7 +98,7 @@ public class MarkovService {
         return msg.toString();
     }
 
-    public long getTotalTokens(){
+    public long getTotalTokens() {
         return this.dao.getTotalTokens();
     }
 

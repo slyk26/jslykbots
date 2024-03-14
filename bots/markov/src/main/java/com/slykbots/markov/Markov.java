@@ -1,6 +1,8 @@
 package com.slykbots.markov;
 
+import com.slykbots.components.commands.Ping;
 import com.slykbots.components.commands.SlashCommand;
+import com.slykbots.components.commands.Toggle;
 import com.slykbots.components.db.DB;
 import com.slykbots.components.listeners.GuildMessageListener;
 import com.slykbots.components.listeners.ReadyListener;
@@ -8,7 +10,6 @@ import com.slykbots.components.listeners.SCIListener;
 import com.slykbots.components.util.EnvLoader;
 import com.slykbots.markov.chains.MarkovService;
 import com.slykbots.markov.slashcommands.Info;
-import com.slykbots.markov.slashcommands.Ping;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -18,9 +19,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class Markov {
-    private static final List<SlashCommand> c = List.of(new Ping(), new Info());
+
+    public static final String USE_GLOBAL_KEY = "markov.useGlobalTokens";
+    public static final String LEARN_KEY = "markov.learnFromServer";
+    private static final List<SlashCommand> c = List.of(
+            new Ping(),
+            new Info(),
+            new Toggle(Map.of(
+                    USE_GLOBAL_KEY, "Generate with Global Tokens",
+                    LEARN_KEY, "Learn from this Server"
+            ))
+    );
 
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Markov.class);
