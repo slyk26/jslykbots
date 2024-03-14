@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
 
 env:
-  IMAGE_NAME: ${{ github.repository }}/markov
+  IMAGE_NAME: markov
 
 jobs:
   push-markov-image:
