@@ -42,3 +42,6 @@ build/
 
 # postgres docker image volume
 db/postgres.db
+
+# yt-dlp for testing
+/yt-dlp_linux

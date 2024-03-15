@@ -2,6 +2,7 @@ package com.slykbots.components.commands;
 
 import com.slykbots.components.settings.SettingService;
 import lombok.EqualsAndHashCode;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -45,6 +46,9 @@ public class Toggle extends GuildOnlySlashCommand {
 
     @Override
     public void execute(SlashCommandInteraction event) {
+        if(!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER))
+            event.reply("you cannot do that").setEphemeral(true).queue();
+
         List<OptionMapping> om = event.getOptions();
 
         OptionMapping setting = om.stream().filter(f -> f.getName().equals("setting")).toList().getFirst();
