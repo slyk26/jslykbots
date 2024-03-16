@@ -18,7 +18,7 @@ public class PrintQueue extends LegacyCommand {
     @Override
     public void execute(MessageReceivedEvent e, List<String> args) {
         AtomicInteger cnt = new AtomicInteger();
-        var c = e.getChannel().asTextChannel();
+        var c = e.getChannel().asGuildMessageChannel();
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
         var a = musicManager.scheduler.getPlaylist().stream().filter(Objects::nonNull).toList();
         StringBuilder sb = new StringBuilder();
