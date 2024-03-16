@@ -36,7 +36,7 @@ public class Sc extends PlayCommand {
         if (Muzika.vcCheck(e)) return;
         var arg = args.getFirst();
         var scTrack = searchSc(arg);
-        var c = e.getChannel().asTextChannel();
+        var c = e.getChannel().asGuildMessageChannel();
 
         if (scTrack.getUrl().contains("cf-hls-media")) {
             c.sendMessage("Song found but has invalid Encoding serverside").queue();
