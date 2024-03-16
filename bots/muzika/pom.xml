@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.slykbots</groupId>
-        <artifactId>bots</artifactId>
+        <artifactId>jslykbots</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>muzika</artifactId>
@@ -47,6 +48,11 @@
             <artifactId>lavaplayer</artifactId>
             <version>2.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.slykbots</groupId>
+            <artifactId>shared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -56,7 +62,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.slykbots.Muzika.</mainClass>
+                            <mainClass>com.slykbots.muzika.Muzika</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

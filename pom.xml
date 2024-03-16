@@ -9,8 +9,9 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>bots</module>
         <module>shared</module>
+        <module>bots/markov</module>
+        <module>bots/muzika</module>
     </modules>
 
     <properties>
@@ -54,5 +55,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

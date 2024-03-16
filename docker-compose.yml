@@ -21,3 +21,13 @@ services:
       - .env
     depends_on:
       - db
+
+  muzika:
+    container_name: muzika
+    build:
+      dockerfile: bots/muzika/Dockerfile
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - db

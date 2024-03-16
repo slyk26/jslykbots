@@ -46,8 +46,10 @@ public class Toggle extends GuildOnlySlashCommand {
 
     @Override
     public void execute(SlashCommandInteraction event) {
-        if(!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER))
+        if(!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER)) {
             event.reply("you cannot do that").setEphemeral(true).queue();
+            return;
+        }
 
         List<OptionMapping> om = event.getOptions();
 
@@ -56,7 +58,7 @@ public class Toggle extends GuildOnlySlashCommand {
 
         logger.debug("{} {}", setting, enabled);
 
-        this.ss.setSetting(Objects.requireNonNull(event.getGuild()).getId(), setting.getAsString(), enabled.getAsString());
+        this.ss.setSetting(this.getGuildId(event), setting.getAsString(), enabled.getAsString());
 
         event.reply("updated successfully!").setEphemeral(true).queue();
     }

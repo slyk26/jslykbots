@@ -10,8 +10,8 @@ trying out a monorepo architecture to create discontinued Discord Bots
   - [x] works with Soundcloud (scuffed), YT Videos and Livestreams
   - [x] Soundcloud has query search, YT has link and query search
   - [ ] add user awareness (leave if no listeners, etc ..)
-  - [ ] make pretty
-  - [ ] Docker Image
+  - [x] make pretty
+  - [x] Docker Image
 - [ ] help command for all bots
 - [ ] Utility Bot (Polls, Confessions and whatnot)
 - [ ] AI Chatting somewhere
@@ -20,26 +20,33 @@ trying out a monorepo architecture to create discontinued Discord Bots
 
 ___
 
-### setup db
 
-run `setup.sh` [found here](./db_setup) to boot up the db and create the tables in it automatically
-
-### setup muzika
-
-* get a yt-dlp binary and replace the file in the muzika module
-
-### use in production
+### new setup
 
 - clone repo
 - create .env in root directory with .env file example below
 - setup.sh
 - watch logs with `docker logs markov --follow`
 
+
+#### setup db
+
+run `setup.sh` [found here](./db_setup) to boot up the db and create the tables in it automatically
+
+#### configure muzika
+
+* get a yt-dlp binary and replace the filepath in [Sc](bots/muzika/src/main/java/com/slykbots/muzika/legacycommands/Sc.java) and [Yt](bots/muzika/src/main/java/com/slykbots/muzika/legacycommands/Yt.java) 
+
+___
+
 ### .env file - so I don't get dementia
 ```
 # discord keys
 MARKOV_KEY=
 MUZIKA_KEY=
+
+# character for legacy commands
+LEGACY_KEY=
 
 #postgres variables
 POSTGRES_USER=
