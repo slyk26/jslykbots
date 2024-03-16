@@ -37,7 +37,7 @@ public class SetMusicChannel extends GuildOnlySlashCommand {
 
     @Override
     public void execute(SlashCommandInteraction event) {
-        if(!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER)) {
+        if(!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_CHANNEL)) {
             event.reply("you cannot do that").setEphemeral(true).queue();
             return;
         }
