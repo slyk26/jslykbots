@@ -1,8 +1,9 @@
 package com.slykbots.muzika.legacycommands;
 
+import com.slykbots.muzika.Muzika;
 import lombok.Data;
 import lombok.SneakyThrows;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,13 +32,15 @@ public class Sc extends PlayCommand {
     }
 
     @Override
-    public void execute(TextChannel c, List<String> args) {
+    public void execute(MessageReceivedEvent e, List<String> args) {
+        if (Muzika.vcCheck(e)) return;
         var arg = args.getFirst();
         var scTrack = searchSc(arg);
+        var c = e.getChannel().asTextChannel();
 
-        if(scTrack.getUrl().contains("cf-hls-media")){
+        if (scTrack.getUrl().contains("cf-hls-media")) {
             c.sendMessage("Song found but has invalid Encoding serverside").queue();
-        } else if(scTrack.getUrl().contains("cf-preview-media")) {
+        } else if (scTrack.getUrl().contains("cf-preview-media")) {
             c.sendMessage("Song found but is GO+ (premium)").queue();
         } else {
             loadAndPlay(c, scTrack.getUrl(), scTrack.getTitle());

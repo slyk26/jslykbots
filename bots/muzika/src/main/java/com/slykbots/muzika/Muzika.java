@@ -10,14 +10,18 @@ import com.slykbots.components.db.DB;
 import com.slykbots.components.listeners.MessageListener;
 import com.slykbots.components.listeners.ReadyListener;
 import com.slykbots.components.listeners.SCIListener;
+import com.slykbots.components.settings.SettingService;
 import com.slykbots.components.util.EnvLoader;
+import com.slykbots.components.util.Helper;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
 import com.slykbots.muzika.legacycommands.*;
+import com.slykbots.muzika.listeners.AutoLeaveListener;
 import com.slykbots.muzika.slashcommands.SetMusicChannel;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
@@ -29,6 +33,8 @@ import java.util.Map;
 
 public class Muzika {
 
+
+    private static final SettingService ss = new SettingService();
     public static final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
     protected static final Map<Long, GuildMusicManager> musicManagers =  new HashMap<>();
     private static final List<SlashCommand> c = List.of(
@@ -50,11 +56,13 @@ public class Muzika {
         DB.healthcheck();
 
         JDA jda = JDABuilder.createDefault(EnvLoader.getVar("MUZIKA_KEY"))
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_VOICE_STATES)
+                .enableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
                 .addEventListeners(new MessageListener(e -> l.forEach(cmd -> cmd.handleLegacyCommand(e))))
-                .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
+                .addEventListeners(new AutoLeaveListener(ss))
+                .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 .setActivity(Activity.listening("gachimuchi")).build();
 
         jda.updateCommands().addCommands(c.stream().map(SlashCommand::getData).toList()).queue();
@@ -73,5 +81,14 @@ public class Muzika {
         guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
 
         return musicManager;
+    }
+
+    public static boolean vcCheck(MessageReceivedEvent e) {
+        var vc = ss.getSetting(e.getGuild().getId(), "muzika.voiceChannel");
+        if (!Helper.isInChannel(e.getMember(), e.getGuild(), vc)) {
+            e.getChannel().sendMessage("join the music channel first: <#" + vc + ">").queue();
+            return true;
+        }
+        return false;
     }
 }

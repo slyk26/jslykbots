@@ -1,13 +1,14 @@
 package com.slykbots.muzika.legacycommands;
 
+import com.slykbots.muzika.Muzika;
 import lombok.SneakyThrows;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class Yt extends PlayCommand{
+public class Yt extends PlayCommand {
     public Yt() {
         super("yt", 1);
     }
@@ -24,11 +25,12 @@ public class Yt extends PlayCommand{
     }
 
     @Override
-    public void execute(TextChannel c, List<String> args) {
+    public void execute(MessageReceivedEvent e, List<String> args) {
+        if(Muzika.vcCheck(e)) return;
         var arg = args.getFirst();
 
-        if(!isUrl(arg)) arg = searchYt(arg);
+        if (!isUrl(arg)) arg = searchYt(arg);
 
-        loadAndPlay(c, arg, null);
+        loadAndPlay(e.getChannel().asTextChannel(), arg, null);
     }
 }

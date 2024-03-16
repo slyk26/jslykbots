@@ -81,14 +81,18 @@ public abstract class PlayCommand extends LegacyCommand {
 
     private void play(Guild guild, GuildMusicManager musicManager, AudioTrack track) {
         connectToMusicChannel(guild.getAudioManager());
-
         musicManager.scheduler.queue(track);
     }
 
     private void connectToMusicChannel(AudioManager audioManager) {
         if (!audioManager.isConnected()) {
             var g = audioManager.getGuild().getId();
-            var a =this.ss.getSetting(g, "muzika.voiceChannel");
+            var a = this.ss.getSetting(g, "muzika.voiceChannel");
+
+            if(a == null) {
+                logger.warn("muzika.voiceChannel is not set");
+            }
+
             var channels = audioManager.getGuild().getChannels().stream().filter(c -> c.getId().equals(a)).toList();
 
             if(channels.isEmpty()) {

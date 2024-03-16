@@ -1,12 +1,14 @@
 package com.slykbots.muzika.legacycommands;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.muzika.Muzika;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrintQueue extends LegacyCommand {
     public PrintQueue() {
@@ -14,7 +16,9 @@ public class PrintQueue extends LegacyCommand {
     }
 
     @Override
-    public void execute(TextChannel c, List<String> args) {
+    public void execute(MessageReceivedEvent e, List<String> args) {
+        AtomicInteger cnt = new AtomicInteger();
+        var c = e.getChannel().asTextChannel();
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
         var a = musicManager.scheduler.getPlaylist().stream().filter(Objects::nonNull).toList();
         StringBuilder sb = new StringBuilder();
@@ -24,7 +28,8 @@ public class PrintQueue extends LegacyCommand {
             return;
         }
 
-        a.forEach(b -> {
+        for (AudioTrack b : a) {
+            cnt.addAndGet(1);
             var i = b.getInfo();
             var s = i.length;
 
@@ -33,11 +38,17 @@ public class PrintQueue extends LegacyCommand {
             if (i.isStream) {
                 sb.append("[LIVE]");
             } else {
-                sb.append(String.format("[%02d:%02d]", s / 60000, (s % 10000) / 100 * 60 / 100));
+                float f = s%10000;
+                sb.append(String.format("[%02d:%02.0f]", s / 60000, (f / 1000)));
             }
 
             sb.append(" ").append(i.title).append("\n");
-        });
+
+            if (cnt.get() == 10) {
+                sb.append("... and ").append(a.size() - 10).append(" more!");
+                break;
+            }
+        }
 
         c.sendMessage(sb.toString()).queue();
     }

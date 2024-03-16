@@ -3,7 +3,7 @@ package com.slykbots.muzika.legacycommands;
 import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.muzika.Muzika;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.List;
 
@@ -13,7 +13,9 @@ public class Skip extends LegacyCommand {
     }
 
     @Override
-    public void execute(TextChannel c, List<String> args) {
+    public void execute(MessageReceivedEvent e, List<String> args) {
+        if (Muzika.vcCheck(e)) return;
+        var c = e.getChannel().asTextChannel();
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
         musicManager.scheduler.nextTrack();
 

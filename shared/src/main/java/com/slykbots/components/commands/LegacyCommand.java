@@ -1,7 +1,6 @@
 package com.slykbots.components.commands;
 
 import com.slykbots.components.util.EnvLoader;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
@@ -26,13 +25,12 @@ public abstract class LegacyCommand {
         return c.equals(cmd) && length == this.pLength + 1;
     }
 
-    public abstract void execute(TextChannel c, List<String> args);
+    public abstract void execute(MessageReceivedEvent e, List<String> args);
 
     public void handleLegacyCommand(MessageReceivedEvent e) {
-        var d = e.getChannel().asTextChannel();
         List<String> command = Arrays.asList(e.getMessage().getContentRaw().split(" ", 2));
         if (this.validate(command.getFirst(), command.size())) {
-            this.execute(d, command.subList(1, command.size()));
+            this.execute(e, command.subList(1, command.size()));
         }
     }
 }

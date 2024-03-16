@@ -1,6 +1,7 @@
 package com.slykbots.markov.chains;
 
 import com.slykbots.components.settings.SettingService;
+import com.slykbots.components.util.EnvLoader;
 import com.slykbots.components.util.Helper;
 import com.slykbots.markov.Markov;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -44,7 +45,7 @@ public class MarkovService {
     private void destructMessage(String msg, String server) {
         boolean learn = Boolean.parseBoolean(this.ss.getSetting(server, Markov.LEARN_KEY));
 
-        if (!learn) return;
+        if (!learn || msg.startsWith(EnvLoader.getVar("LEGACY_KEY"))) return;
 
         List<String> parts = List.of(msg.split(" "));
 

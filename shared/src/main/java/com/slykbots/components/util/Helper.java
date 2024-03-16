@@ -1,9 +1,12 @@
 package com.slykbots.components.util;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Helper {
 
@@ -24,12 +27,21 @@ public class Helper {
     }
 
     /**
-     *
      * @param msg a Message from a Message event
      * @return whether the bot is mentioned or not
      */
-    public static boolean isBotMentioned(Message msg){
+    public static boolean isBotMentioned(Message msg) {
         var m = msg.getMentions();
         return m.isMentioned(msg.getJDA().getSelfUser(), Message.MentionType.USER);
     }
+
+    public static List<Member> getMembersOfVoiceChannel(Guild g, String channel) {
+        return Objects.requireNonNull(Objects.requireNonNull(g.getVoiceChannelById(channel)).getMembers());
+    }
+
+    public static boolean isInChannel(Member m, Guild g, String channel) {
+        var members = Helper.getMembersOfVoiceChannel(g, channel);
+        return members.stream().anyMatch(x -> x.getId().equals(m.getId()));
+    }
+
 }
