@@ -16,7 +16,7 @@ public class FastForward extends LegacyCommand {
     @Override
     public void execute(MessageReceivedEvent e, List<String> args) {
         if (Muzika.vcCheck(e)) return;
-        var c = e.getChannel().asTextChannel();
+        var c = e.getChannel().asGuildMessageChannel();
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
         List<AudioTrack> pl = musicManager.scheduler.getPlaylist();
 
