@@ -11,8 +11,8 @@ import com.slykbots.muzika.Muzika;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
 import com.slykbots.muzika.lavastuff.ScHttpAudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public abstract class PlayCommand extends LegacyCommand {
         }
     }
 
-    protected void loadAndPlay(final TextChannel c, final String trackUrl, String fallbackTitle) {
+    protected void loadAndPlay(final StandardGuildMessageChannel c, final String trackUrl, String fallbackTitle) {
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
 
         Muzika.playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
