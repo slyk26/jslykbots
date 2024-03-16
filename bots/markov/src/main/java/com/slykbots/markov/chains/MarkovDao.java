@@ -135,7 +135,7 @@ public class MarkovDao extends Dao<MarkovToken, Integer> {
     /// ignore conditional preparedStatement Warning
     @SuppressWarnings("java:S2695")
     public MarkovToken getRandom(String guildId, boolean fromGlobal) {
-        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data" + (fromGlobal ? " " : " where guild_id = ?") + " order by random() limit 1";
+        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data" + (fromGlobal ? " " : " where guild_id = ? ") + " order by random() limit 1";
         MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             if (!fromGlobal)
@@ -153,7 +153,7 @@ public class MarkovDao extends Dao<MarkovToken, Integer> {
     /// ignore conditional preparedStatement Warning
     @SuppressWarnings("java:S2695")
     public MarkovToken getNext(String newCurrentWord, String guildId, boolean fromGlobal) {
-        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where current_word = ?" + (fromGlobal ? " " : "and guild_id = ?") + " order by frequency desc";
+        String sql = "select id, guild_id, current_word, next_word, frequency from markov_data where current_word = ?" + (fromGlobal ? " " : " and guild_id = ?") + " order by frequency desc";
         MarkovToken retVal = null;
         try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
             stmt.setString(1, newCurrentWord);
@@ -168,7 +168,7 @@ public class MarkovDao extends Dao<MarkovToken, Integer> {
             logger.debug("getNext: {}", retVal);
 
         } catch (SQLException e) {
-            logger.error("Cannot get a Starting Entry: {}", e.getMessage());
+            logger.error("Cannot get a next Entry: {}", e.getMessage());
         }
         return retVal;
     }
