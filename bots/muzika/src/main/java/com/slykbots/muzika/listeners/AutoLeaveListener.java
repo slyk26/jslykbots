@@ -10,7 +10,7 @@ public class AutoLeaveListener extends VoiceChannelListener {
     public AutoLeaveListener(SettingService ss) {
         super(c -> {
             var guildId = c.getGuild().getId();
-            var members = Helper.getMembersOfVoiceChannel(c.getGuild(), ss.getSetting(guildId, "muzika.voiceChannel"));
+            var members = Helper.getMembersOfVoiceChannel(c.getGuild(), ss.getSetting(guildId, Muzika.MUZIKA_VC_KEY));
 
             if(members.size() == 1 && c.getJDA().getSelfUser().getId().equals(members.getFirst().getId())) {
                 Muzika.getGuildAudioPlayer(c.getGuild()).player.destroy();

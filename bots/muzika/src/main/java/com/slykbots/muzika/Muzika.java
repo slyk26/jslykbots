@@ -7,6 +7,7 @@ import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.components.commands.Ping;
 import com.slykbots.components.commands.SlashCommand;
 import com.slykbots.components.db.DB;
+import com.slykbots.components.listeners.GuildJoinListener;
 import com.slykbots.components.listeners.MessageListener;
 import com.slykbots.components.listeners.ReadyListener;
 import com.slykbots.components.listeners.SCIListener;
@@ -34,9 +35,10 @@ import java.util.Map;
 public class Muzika {
 
 
+    public static final String MUZIKA_VC_KEY = "muzika.voiceChannel";
     private static final SettingService ss = new SettingService();
     public static final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-    protected static final Map<Long, GuildMusicManager> musicManagers =  new HashMap<>();
+    protected static final Map<Long, GuildMusicManager> musicManagers = new HashMap<>();
     private static final List<SlashCommand> c = List.of(
             new Ping(),
             new SetMusicChannel()
@@ -62,6 +64,12 @@ public class Muzika {
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
                 .addEventListeners(new MessageListener(e -> l.forEach(cmd -> cmd.handleLegacyCommand(e))))
                 .addEventListeners(new AutoLeaveListener(ss))
+                .addEventListeners(new GuildJoinListener(e -> {
+                    var gi = e.getGuild().getId();
+                    var vc = ss.getSetting(gi, Muzika.MUZIKA_VC_KEY);
+                    var id = e.getGuild().getVoiceChannels().getFirst().getId();
+                    if (vc == null) ss.setSetting(gi, Muzika.MUZIKA_VC_KEY, id);
+                }))
                 .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 .setActivity(Activity.listening("gachimuchi")).build();
 
@@ -84,7 +92,7 @@ public class Muzika {
     }
 
     public static boolean vcCheck(MessageReceivedEvent e) {
-        var vc = ss.getSetting(e.getGuild().getId(), "muzika.voiceChannel");
+        var vc = ss.getSetting(e.getGuild().getId(), Muzika.MUZIKA_VC_KEY);
         if (!Helper.isInChannel(e.getMember(), e.getGuild(), vc)) {
             e.getChannel().sendMessage("join the music channel first: <#" + vc + ">").queue();
             return true;

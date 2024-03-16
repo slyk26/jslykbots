@@ -4,9 +4,11 @@ import com.slykbots.components.commands.Ping;
 import com.slykbots.components.commands.SlashCommand;
 import com.slykbots.components.commands.Toggle;
 import com.slykbots.components.db.DB;
+import com.slykbots.components.listeners.GuildJoinListener;
 import com.slykbots.components.listeners.GuildMessageListener;
 import com.slykbots.components.listeners.ReadyListener;
 import com.slykbots.components.listeners.SCIListener;
+import com.slykbots.components.settings.SettingService;
 import com.slykbots.components.util.EnvLoader;
 import com.slykbots.markov.chains.MarkovService;
 import com.slykbots.markov.slashcommands.Info;
@@ -37,6 +39,7 @@ public class Markov {
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Markov.class);
         MarkovService service = new MarkovService();
+        SettingService ss = new SettingService();
         DB.healthcheck();
 
         JDA jda = JDABuilder.createDefault(EnvLoader.getVar("MARKOV_KEY"))
@@ -44,6 +47,11 @@ public class Markov {
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
                 .addEventListeners(new GuildMessageListener(service::handleMarkovChains))
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
+                .addEventListeners(new GuildJoinListener(e -> {
+                    var gi = e.getGuild().getId();
+                    if(ss.getSetting(gi, USE_GLOBAL_KEY) == null) ss.setSetting(gi, USE_GLOBAL_KEY, "false");
+                    if(ss.getSetting(gi, LEARN_KEY) == null) ss.setSetting(gi, LEARN_KEY, "false");
+                }))
                 .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 .setActivity(Activity.customStatus("Forsen")).build();
 

@@ -87,7 +87,7 @@ public abstract class PlayCommand extends LegacyCommand {
     private void connectToMusicChannel(AudioManager audioManager) {
         if (!audioManager.isConnected()) {
             var g = audioManager.getGuild().getId();
-            var a = this.ss.getSetting(g, "muzika.voiceChannel");
+            var a = this.ss.getSetting(g, Muzika.MUZIKA_VC_KEY);
 
             if(a == null) {
                 logger.warn("muzika.voiceChannel is not set");

@@ -2,6 +2,7 @@ package com.slykbots.muzika.slashcommands;
 
 import com.slykbots.components.commands.GuildOnlySlashCommand;
 import com.slykbots.components.settings.SettingService;
+import com.slykbots.muzika.Muzika;
 import lombok.EqualsAndHashCode;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -59,7 +60,7 @@ public class SetMusicChannel extends GuildOnlySlashCommand {
         }
 
         logger.debug("channel: {}", c);
-        this.ss.setSetting(this.getGuildId(event), "muzika.voiceChannel", vc.getAsString());
+        this.ss.setSetting(this.getGuildId(event), Muzika.MUZIKA_VC_KEY, vc.getAsString());
         event.reply("Voice Channel is set to: <#" + vc.getAsString() + ">").queue();
     }
 }
