@@ -65,7 +65,8 @@ public class Markov {
                 .addEventListeners(new GuildJoinListener(e -> {
                     var gi = e.getGuild().getId();
                     if (ss.getSetting(gi, USE_GLOBAL_KEY) == null) ss.setSetting(gi, USE_GLOBAL_KEY, "false");
-                    if (ss.getSetting(gi, LEARN_KEY) == null) ss.setSetting(gi, LEARN_KEY, "false");
+                    if (ss.getSetting(gi, LEARN_KEY) == null) ss.setSetting(gi, LEARN_KEY, "true");
+                    if (ss.getSetting(gi, GENERATE_KEY) == null) ss.setSetting(gi, GENERATE_KEY, "false");
                 }))
                 .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 .setActivity(Activity.customStatus("Forsen")).build();
