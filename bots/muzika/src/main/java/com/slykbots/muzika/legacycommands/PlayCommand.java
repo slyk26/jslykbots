@@ -6,7 +6,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.slykbots.components.commands.LegacyCommand;
-import com.slykbots.components.settings.SettingService;
 import com.slykbots.muzika.Muzika;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
 import com.slykbots.muzika.lavastuff.ScHttpAudioTrack;
@@ -22,10 +21,8 @@ import java.net.URISyntaxException;
 
 public abstract class PlayCommand extends LegacyCommand {
     private static final Logger logger = LoggerFactory.getLogger(PlayCommand.class);
-    private final SettingService ss = new SettingService();
-
-    protected PlayCommand(String name, int parameterLength) {
-        super(name, parameterLength);
+    protected PlayCommand(String name, String desc, int parameterLength) {
+        super(name, desc, parameterLength);
     }
 
     protected boolean isUrl(String s) {
@@ -87,7 +84,7 @@ public abstract class PlayCommand extends LegacyCommand {
     private void connectToMusicChannel(AudioManager audioManager) {
         if (!audioManager.isConnected()) {
             var g = audioManager.getGuild().getId();
-            var a = this.ss.getSetting(g, Muzika.MUZIKA_VC_KEY);
+            var a = Muzika.ss.getSetting(g, Muzika.MUZIKA_VC_KEY);
 
             if(a == null) {
                 logger.warn("muzika.voiceChannel is not set");

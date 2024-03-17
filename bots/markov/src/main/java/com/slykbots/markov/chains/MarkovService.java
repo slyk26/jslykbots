@@ -1,6 +1,5 @@
 package com.slykbots.markov.chains;
 
-import com.slykbots.components.settings.SettingService;
 import com.slykbots.components.util.EnvLoader;
 import com.slykbots.components.util.Helper;
 import com.slykbots.markov.Markov;
@@ -15,13 +14,11 @@ public class MarkovService {
     private static final Logger logger = LoggerFactory.getLogger(MarkovService.class);
     private final MarkovDao dao;
 
-    private final SettingService ss;
     private static final int MINIMUM_PARTS = 3;
     private final Random r = new Random();
 
     public MarkovService() {
         this.dao = new MarkovDao();
-        this.ss = new SettingService();
     }
 
     public void handleMarkovChains(MessageReceivedEvent e) {
@@ -43,7 +40,7 @@ public class MarkovService {
     }
 
     private void destructMessage(String msg, String server) {
-        boolean learn = Boolean.parseBoolean(this.ss.getSetting(server, Markov.LEARN_KEY));
+        boolean learn = Boolean.parseBoolean(Markov.ss.getSetting(server, Markov.LEARN_KEY));
 
         if (!learn || msg.startsWith(EnvLoader.getVar("LEGACY_KEY"))) return;
 
@@ -73,7 +70,7 @@ public class MarkovService {
     }
 
     private String generateMessage(String guildId) {
-        boolean fromGlobal = Boolean.parseBoolean(this.ss.getSetting(guildId, Markov.USE_GLOBAL_KEY));
+        boolean fromGlobal = Boolean.parseBoolean(Markov.ss.getSetting(guildId, Markov.USE_GLOBAL_KEY));
 
         logger.debug("guild: {} global: {}", guildId, fromGlobal);
 

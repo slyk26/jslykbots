@@ -1,27 +1,32 @@
 package com.slykbots.components.commands;
 
 import com.slykbots.components.util.EnvLoader;
+import lombok.Getter;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public abstract class LegacyCommand {
     private final String name;
+
+    private final String description;
     private final int pLength;
 
 
-    protected LegacyCommand(String name, int parameterLength) {
+    protected LegacyCommand(String name, String desc, int parameterLength) {
         this.name = name;
+        this.description = desc;
         this.pLength = parameterLength;
     }
 
-    public String getLegacyKey() {
+    public static String getLegacyKey() {
         return EnvLoader.getVar("LEGACY_KEY");
     }
 
     public boolean validate(String cmd, int length) {
-        var c = this.getLegacyKey() + this.name;
+        var c = getLegacyKey() + this.name;
         return c.equals(cmd) && length == this.pLength + 1;
     }
 

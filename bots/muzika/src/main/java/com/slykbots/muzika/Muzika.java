@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.slykbots.components.commands.Help;
 import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.components.commands.Ping;
 import com.slykbots.components.commands.SlashCommand;
@@ -29,21 +30,21 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Muzika {
 
 
     public static final String MUZIKA_VC_KEY = "muzika.voiceChannel";
-    private static final SettingService ss = new SettingService();
+    public static final SettingService ss = new SettingService();
     public static final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
     protected static final Map<Long, GuildMusicManager> musicManagers = new HashMap<>();
-    private static final List<SlashCommand> c = List.of(
+
+    private static final List<SlashCommand> c = new ArrayList<>(Arrays.asList(
             new Ping(),
             new SetMusicChannel()
-    );
+    ));
+
     private static final List<LegacyCommand> l = List.of(
             new Yt(),
             new Sc(),
@@ -51,6 +52,10 @@ public class Muzika {
             new Skip(),
             new FastForward()
     );
+
+    static {
+        c.add(new Help(c, l));
+    }
 
     public static void main(String[] args) {
         AudioSourceManagers.registerRemoteSources(playerManager);
@@ -65,7 +70,7 @@ public class Muzika {
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
                 .addEventListeners(new MessageListener(e -> l.forEach(cmd -> cmd.handleLegacyCommand(e))))
-                .addEventListeners(new AutoLeaveListener(ss))
+                .addEventListeners(new AutoLeaveListener())
                 .addEventListeners(new GuildJoinListener(e -> {
                     var gi = e.getGuild().getId();
                     var vc = ss.getSetting(gi, Muzika.MUZIKA_VC_KEY);

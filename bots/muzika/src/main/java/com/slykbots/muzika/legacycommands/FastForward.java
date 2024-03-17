@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FastForward extends LegacyCommand {
     public FastForward() {
-        super("ff", 0);
+        super("ff", "fast forward to the last Song in the Queue", 0);
     }
 
     @Override

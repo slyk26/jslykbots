@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Skip extends LegacyCommand {
     public Skip() {
-        super("skip", 0);
+        super("skip", "skip the current Song", 0);
     }
 
     @Override

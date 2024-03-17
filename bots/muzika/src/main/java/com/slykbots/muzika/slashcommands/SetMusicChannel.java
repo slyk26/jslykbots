@@ -24,7 +24,7 @@ public class SetMusicChannel extends GuildOnlySlashCommand {
     private final SettingService ss;
 
     public SetMusicChannel() {
-        super("set", "choose which Vc the Bot will play in");
+        super("set", "define the Vc where the Bot will play Music");
 
         this.ss = new SettingService();
     }

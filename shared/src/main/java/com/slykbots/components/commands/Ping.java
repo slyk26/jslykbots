@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class Ping extends SlashCommand {
     public Ping() {
-        super("ping", "Checks the Ping of the Bot.");
+        super("ping", "Checks the Ping of the Bot");
     }
 
     @Override

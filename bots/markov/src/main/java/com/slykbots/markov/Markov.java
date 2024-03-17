@@ -1,5 +1,6 @@
 package com.slykbots.markov;
 
+import com.slykbots.components.commands.Help;
 import com.slykbots.components.commands.Ping;
 import com.slykbots.components.commands.SlashCommand;
 import com.slykbots.components.commands.Toggle;
@@ -20,26 +21,30 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Markov {
 
     public static final String USE_GLOBAL_KEY = "markov.useGlobalTokens";
     public static final String LEARN_KEY = "markov.learnFromServer";
-    private static final List<SlashCommand> c = List.of(
+    public static final SettingService ss = new SettingService();
+    public static final MarkovService ms = new MarkovService();
+    private static final List<SlashCommand> c = new ArrayList<>(Arrays.asList(
             new Ping(),
             new Info(),
             new Toggle(Map.of(
                     USE_GLOBAL_KEY, "Generate with Global Tokens",
                     LEARN_KEY, "Learn from this Server"
             ))
-    );
+    ));
+
+    static {
+        c.add(new Help(c, Collections.emptyList()));
+    }
 
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Markov.class);
         MarkovService service = new MarkovService();
-        SettingService ss = new SettingService();
         DB.healthcheck();
 
         JDA jda = JDABuilder.createDefault(EnvLoader.getVar("MARKOV_KEY"))
@@ -49,8 +54,8 @@ public class Markov {
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
                 .addEventListeners(new GuildJoinListener(e -> {
                     var gi = e.getGuild().getId();
-                    if(ss.getSetting(gi, USE_GLOBAL_KEY) == null) ss.setSetting(gi, USE_GLOBAL_KEY, "false");
-                    if(ss.getSetting(gi, LEARN_KEY) == null) ss.setSetting(gi, LEARN_KEY, "false");
+                    if (ss.getSetting(gi, USE_GLOBAL_KEY) == null) ss.setSetting(gi, USE_GLOBAL_KEY, "false");
+                    if (ss.getSetting(gi, LEARN_KEY) == null) ss.setSetting(gi, LEARN_KEY, "false");
                 }))
                 .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 .setActivity(Activity.customStatus("Forsen")).build();

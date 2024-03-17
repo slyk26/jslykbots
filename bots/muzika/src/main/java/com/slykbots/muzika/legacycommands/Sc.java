@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Sc extends PlayCommand {
     public Sc() {
-        super("sc", 1);
+        super("sc", "`" + getLegacyKey() + "sc query`\nsearches Soundcloud for a Song and plays it!", 1);
     }
 
     @SneakyThrows

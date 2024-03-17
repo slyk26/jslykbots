@@ -4,15 +4,17 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.muzika.Muzika;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrintQueue extends LegacyCommand {
     public PrintQueue() {
-        super("list", 0);
+        super("list", "print all queued songs", 0);
     }
 
     @Override
@@ -21,35 +23,29 @@ public class PrintQueue extends LegacyCommand {
         var c = e.getChannel().asGuildMessageChannel();
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
         var a = musicManager.scheduler.getPlaylist().stream().filter(Objects::nonNull).toList();
-        StringBuilder sb = new StringBuilder();
+        EmbedBuilder em = new EmbedBuilder();
 
         if (a.isEmpty()) {
-            c.sendMessage("Queue is empty. Add music with "+ this.getLegacyKey() +"yt or " + this.getLegacyKey() + "sc.").queue();
+            c.sendMessage("Queue is empty. Add music with "+ LegacyCommand.getLegacyKey() +"yt or " + LegacyCommand.getLegacyKey() + "sc.").queue();
             return;
         }
+
+        em.setTitle("Current Bangers");
+        em.setColor(Color.RED);
 
         for (AudioTrack b : a) {
             cnt.addAndGet(1);
             var i = b.getInfo();
             var s = i.length;
-
-            sb.append("[").append(i.identifier.length() == 11 ? "YT" : "SC").append("]");
-
-            if (i.isStream) {
-                sb.append("[LIVE]");
-            } else {
-                float f = s%10000;
-                sb.append(String.format("[%02d:%02.0f]", s / 60000, (f / 1000)));
-            }
-
-            sb.append(" ").append(i.title).append("\n");
+            float f = s%10000;
+            em.addField("[" + (i.identifier.length() == 11 ? "Youtube" : "Soundcloud") + "]" + (i.isStream ? "[LIVE]" : String.format(" - %02d:%02.0f", s / 60000, (f / 1000)))
+                    , i.title + " /// " + i.author , false);
 
             if (cnt.get() == 10) {
-                sb.append("... and ").append(a.size() - 10).append(" more!");
+                em.setFooter("... and " + (a.size() - 10) + " more!");
                 break;
             }
         }
-
-        c.sendMessage(sb.toString()).queue();
+        c.sendMessageEmbeds(em.build()).queue();
     }
 }
