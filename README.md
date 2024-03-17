@@ -50,7 +50,7 @@ LEGACY_KEY=
 
 # ai stuff
 OPENAI_KEY=
-OPENAI_PRE_PROMT=
+OPENAI_PRE_PROMPT=
 
 #postgres variables
 POSTGRES_USER=
