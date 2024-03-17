@@ -58,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
-            <artifactId>udpqueue-native-linux-arm</artifactId>
+            <artifactId>udpqueue-native-linux-aarch64</artifactId>
             <version>0.2.7</version>
             <exclusions>
                 <exclusion>
