@@ -9,12 +9,12 @@ trying out a monorepo architecture to create discontinued Discord Bots
 - [x] Music bot (similar to Rhytmn Bot) -> **muzika module**
   - [x] works with Soundcloud (scuffed), YT Videos and Livestreams
   - [x] Soundcloud has query search, YT has link and query search
-  - [ ] add user awareness (leave if no listeners, etc ..)
+  - [x] add user awareness (leave if no listeners, etc ..)
   - [x] make pretty
   - [x] Docker Image
-- [ ] help command for all bots
+- [x] help command for all bots
 - [ ] Utility Bot (Polls, Confessions and whatnot)
-- [ ] AI Chatting somewhere
+- [x] AI Chatting somewhere
 - cont.
 
 
@@ -47,6 +47,10 @@ MUZIKA_KEY=
 
 # character for legacy commands
 LEGACY_KEY=
+
+# ai stuff
+OPENAI_KEY=
+OPENAI_PRE_PROMT=
 
 #postgres variables
 POSTGRES_USER=

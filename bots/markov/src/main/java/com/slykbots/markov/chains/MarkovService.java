@@ -33,7 +33,7 @@ public class MarkovService {
         if (e.isFromGuild() && !e.getAuthor().isBot() && !Helper.isBotMentioned(e.getMessage()))
             this.destructMessage(msg, server);
 
-        if ((Helper.isBotMentioned(e.getMessage()) || r.nextInt(100 - 1) + 1 <= 7) && e.isFromGuild() && !e.getAuthor().isBot())
+        if ((Helper.isBotMentioned(e.getMessage()) || r.nextInt(100 - 1) + 1 <= 3) && e.isFromGuild() && !e.getAuthor().isBot() && "true".equals(Markov.ss.getSetting(server, Markov.GENERATE_KEY)))
             e.getChannel().sendMessage(this.generateMessage(server)).queue();
 
 
