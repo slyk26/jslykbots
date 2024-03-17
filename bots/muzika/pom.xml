@@ -58,8 +58,8 @@
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
-            <artifactId>udpqueue-api</artifactId>
-            <version>0.1.1</version>
+            <artifactId>udpqueue-native-linux-arm</artifactId>
+            <version>0.2.7</version>
             <exclusions>
                 <exclusion>
                     <groupId>dev.arbjerg</groupId>
@@ -74,7 +74,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>com.sedmelluq</groupId>
-                    <artifactId>udp-api</artifactId>
+                    <artifactId>udp-queue</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
