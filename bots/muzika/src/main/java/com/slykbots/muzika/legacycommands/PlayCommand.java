@@ -34,16 +34,16 @@ public abstract class PlayCommand extends LegacyCommand {
         }
     }
 
-    protected void loadAndPlay(final GuildMessageChannel c, final String trackUrl, String fallbackTitle) {
+    protected void loadAndPlay(final GuildMessageChannel c, final String trackUrl, String scTitle, String scUploader) {
         GuildMusicManager musicManager = Muzika.getGuildAudioPlayer(c.getGuild());
 
         Muzika.playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 // Soundcloud workaround
-                if (fallbackTitle != null) {
+                if (scTitle != null) {
                     var b = (HttpAudioTrack) track;
-                    track = new ScHttpAudioTrack(track.getInfo(), track.getSourceManager(), b.getContainerTrackFactory(), fallbackTitle);
+                    track = new ScHttpAudioTrack(track.getInfo(), track.getSourceManager(), b.getContainerTrackFactory(), scTitle, scUploader);
                 }
 
                 c.sendMessage(("Adding to queue: " + track.getInfo().title)).queue();

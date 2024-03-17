@@ -31,6 +31,6 @@ public class Yt extends PlayCommand {
 
         if (!isUrl(arg)) arg = searchYt(arg);
 
-        loadAndPlay(e.getChannel().asGuildMessageChannel(), arg, null);
+        loadAndPlay(e.getChannel().asGuildMessageChannel(), arg, null, null);
     }
 }

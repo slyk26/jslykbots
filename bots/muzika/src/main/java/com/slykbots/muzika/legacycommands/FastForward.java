@@ -25,6 +25,6 @@ public class FastForward extends LegacyCommand {
             pl.removeFirst();
         }
 
-        c.sendMessage(">> fast forward to newest Song >> ").queue();
+        c.sendMessage(":fast_forward: now playing: " + pl.getFirst().getInfo().title).queue();
     }
 }

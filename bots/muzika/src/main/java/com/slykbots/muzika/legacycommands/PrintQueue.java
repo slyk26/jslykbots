@@ -6,6 +6,8 @@ import com.slykbots.muzika.Muzika;
 import com.slykbots.muzika.lavastuff.GuildMusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.List;
@@ -13,8 +15,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrintQueue extends LegacyCommand {
+    private static Logger logger = LoggerFactory.getLogger(PrintQueue.class);
     public PrintQueue() {
-        super("list", "print all queued songs", 0);
+        super("list", "print all queued Songs", 0);
     }
 
     @Override
@@ -30,19 +33,23 @@ public class PrintQueue extends LegacyCommand {
             return;
         }
 
-        em.setTitle("Current Bangers");
+        em.setTitle("Playlist");
         em.setColor(Color.RED);
 
         for (AudioTrack b : a) {
+            logger.debug("duration: {}", b.getDuration());
             cnt.addAndGet(1);
             var i = b.getInfo();
-            var s = i.length;
-            float f = s%10000;
-            em.addField("[" + (i.identifier.length() == 11 ? "Youtube" : "Soundcloud") + "]" + (i.isStream ? "[LIVE]" : String.format(" - %02d:%02.0f", s / 60000, (f / 1000)))
-                    , i.title + " /// " + i.author , false);
+            float d = i.length;
+            float min = (d / 1000 / 60);
+            float sec = (min - (int) min) / 100 * 60 * 100;
+            var src = (i.identifier.length() == 11 ? "Youtube" : "Soundcloud");
+            var time = i.isStream ? "LIVE" : String.format("%02d:%02d", (int)min, (int)sec);
 
-            if (cnt.get() == 10) {
-                em.setFooter("... and " + (a.size() - 10) + " more!");
+            em.addField((a.indexOf(b) == 0 ? "__Now playing__: " : "") + i.title + " - " + i.author, time + " - " + src , false);
+
+            if (cnt.get() == 6) {
+                em.setFooter("... and " + (a.size() - 6) + " more!");
                 break;
             }
         }

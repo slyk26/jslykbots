@@ -18,14 +18,15 @@ public class Sc extends PlayCommand {
     private static ScResult searchSc(String query) {
         query = query.replace("\"", "'");
 
-        Process p = new ProcessBuilder().command("./yt-dlp_linux", "scsearch:\"" + query + "\"", "--no-download", "--get-url", "--get-title").start();
+        Process p = new ProcessBuilder().command("./yt-dlp_linux", "scsearch:\"" + query + "\"", "--no-download", "--get-url", "--get-title", "--print", "uploader").start();
         p.waitFor();
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
         var lines = br.lines().toList();
         ScResult s = new ScResult();
 
-        s.title = lines.getFirst();
+        s.uploader = lines.getFirst();
+        s.title = lines.get(1);
         s.url = lines.getLast();
 
         return s;
@@ -43,12 +44,13 @@ public class Sc extends PlayCommand {
         } else if (scTrack.getUrl().contains("cf-preview-media")) {
             c.sendMessage("Song found but is GO+ (premium)").queue();
         } else {
-            loadAndPlay(c, scTrack.getUrl(), scTrack.getTitle());
+            loadAndPlay(c, scTrack.getUrl(), scTrack.getTitle(), scTrack.getUploader());
         }
     }
 
     @Data
     private static class ScResult {
+        private String uploader;
         private String title;
         private String url;
     }
