@@ -1,5 +1,6 @@
 package com.slykbots.muzika;
 
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -58,6 +59,7 @@ public class Muzika {
         DB.healthcheck();
 
         JDA jda = JDABuilder.createDefault(EnvLoader.getVar("MUZIKA_KEY"))
+                .setAudioSendFactory(new NativeAudioSendFactory())
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_VOICE_STATES)
                 .enableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
