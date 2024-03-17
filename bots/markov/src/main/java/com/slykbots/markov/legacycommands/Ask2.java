@@ -22,7 +22,7 @@ public class Ask2 extends LegacyCommand {
         var arg = args.getFirst();
         logger.debug("{}", arg);
         CompletionRequest completionRequest = CompletionRequest.builder()
-                .prompt(EnvLoader.getVar("OPENAI_PRE_PROMT") + arg)
+                .prompt(EnvLoader.getVar("OPENAI_PRE_PROMPT") + arg)
                 .maxTokens(1000)
                 .model("gpt-3.5-turbo-instruct")
                 .build();
