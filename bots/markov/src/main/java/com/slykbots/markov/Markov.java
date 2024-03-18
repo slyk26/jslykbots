@@ -59,7 +59,7 @@ public class Markov {
         DB.healthcheck();
 
         JDA jda = JDABuilder.createDefault(EnvLoader.getVar("MARKOV_KEY"))
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
                 .addEventListeners(new GuildMessageListener(service::handleMarkovChains))
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
