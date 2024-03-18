@@ -1,6 +1,9 @@
 package com.slykbots.markov;
 
-import com.slykbots.components.commands.*;
+import com.slykbots.components.commands.Help;
+import com.slykbots.components.commands.LegacyCommand;
+import com.slykbots.components.commands.SlashCommand;
+import com.slykbots.components.commands.Toggle;
 import com.slykbots.components.db.DB;
 import com.slykbots.components.listeners.*;
 import com.slykbots.components.settings.SettingService;
@@ -8,14 +11,15 @@ import com.slykbots.components.util.EnvLoader;
 import com.slykbots.markov.chains.MarkovService;
 import com.slykbots.markov.legacycommands.Ask;
 import com.slykbots.markov.legacycommands.Ask2;
-import com.slykbots.markov.legacycommands.Who;
+import com.slykbots.markov.legacycommands.Ping;
 import com.slykbots.markov.slashcommands.Info;
 import com.theokanning.openai.service.OpenAiService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +38,7 @@ public class Markov {
 
     public static final OpenAiService os = new OpenAiService(EnvLoader.getVar("OPENAI_KEY"));
     private static final List<SlashCommand> c = new ArrayList<>(Arrays.asList(
-            new Ping(),
+            new com.slykbots.components.commands.Ping(),
             new Info(),
             new Toggle(Map.of(
                     USE_GLOBAL_KEY, "Generate with Global Tokens",
@@ -46,7 +50,7 @@ public class Markov {
     private static final List<LegacyCommand> l = List.of(
             new Ask(),
             new Ask2(),
-            new Who()
+            new Ping()
     );
 
     static {
@@ -60,6 +64,8 @@ public class Markov {
 
         JDA jda = JDABuilder.createDefault(EnvLoader.getVar("MARKOV_KEY"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
                 .addEventListeners(new GuildMessageListener(service::handleMarkovChains))
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
@@ -70,7 +76,6 @@ public class Markov {
                     if (ss.getSetting(gi, LEARN_KEY) == null) ss.setSetting(gi, LEARN_KEY, "true");
                     if (ss.getSetting(gi, GENERATE_KEY) == null) ss.setSetting(gi, GENERATE_KEY, "false");
                 }))
-                .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 .setActivity(Activity.customStatus("Forsen")).build();
 
         jda.updateCommands().addCommands(c.stream().map(SlashCommand::getData).toList()).queue();

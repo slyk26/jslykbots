@@ -6,11 +6,11 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.List;
 import java.util.Random;
 
-public class Who extends LegacyCommand {
+public class Ping extends LegacyCommand {
     private final Random r = new Random();
 
-    public Who() {
-        super("who", getLegacyKey() + "who is/has...\nMentions a random user. Additional Text has to be added for context", 1);
+    public Ping() {
+        super("ping","`" + getLegacyKey() + "ping someone who`...\nMentions a random user. Additional Text has to be added for context", 1);
     }
 
     @Override
