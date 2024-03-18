@@ -20,11 +20,10 @@ public class Ask2 extends LegacyCommand {
     @Override
     public void execute(MessageReceivedEvent e, List<String> args) {
         var arg = args.getFirst();
-        var prompt = EnvLoader.getVar("OPENAI_PRE_PROMPT");
-        var p = prompt.replace("%s", e.getAuthor().getName());
+        var p = EnvLoader.getVar("OPENAI_PRE_PROMPT");
         logger.debug("{}", arg);
         CompletionRequest completionRequest = CompletionRequest.builder()
-                .prompt(p)
+                .prompt(p.replace("%s", e.getAuthor().getEffectiveName()) + arg)
                 .maxTokens(1000)
                 .model("gpt-3.5-turbo-instruct")
                 .build();
