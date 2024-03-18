@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Yt extends PlayCommand {
     public Yt() {
-        super("yt", "`" + getLegacyKey() + "yt (query or yt link)`\nsearches Youtube for a song and plays it!", 1);
+        super("yt", "`" + getLegacyKey() + "yt (query or yt link)`\nsearches Youtube for a Song and plays it!", 1);
     }
 
     @SneakyThrows

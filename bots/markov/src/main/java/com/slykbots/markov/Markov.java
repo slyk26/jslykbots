@@ -8,6 +8,7 @@ import com.slykbots.components.util.EnvLoader;
 import com.slykbots.markov.chains.MarkovService;
 import com.slykbots.markov.legacycommands.Ask;
 import com.slykbots.markov.legacycommands.Ask2;
+import com.slykbots.markov.legacycommands.Who;
 import com.slykbots.markov.slashcommands.Info;
 import com.theokanning.openai.service.OpenAiService;
 import net.dv8tion.jda.api.JDA;
@@ -44,7 +45,8 @@ public class Markov {
 
     private static final List<LegacyCommand> l = List.of(
             new Ask(),
-            new Ask2()
+            new Ask2(),
+            new Who()
     );
 
     static {
