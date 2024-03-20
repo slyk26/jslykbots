@@ -29,5 +29,3 @@ services:
       context: .
     env_file:
       - .env
-    depends_on:
-      - db
