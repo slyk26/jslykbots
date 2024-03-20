@@ -27,5 +27,7 @@ services:
     build:
       dockerfile: bots/muzika/Dockerfile
       context: .
+      args:
+        - VERSION
     env_file:
       - .env
