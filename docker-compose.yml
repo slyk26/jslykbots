@@ -22,6 +22,16 @@ services:
     depends_on:
       - db
 
+  bajbot:
+    container_name: bajbot
+    build:
+      dockerfile: bots/bajbot/Dockerfile
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - db
+
   muzika:
     container_name: muzika
     build:

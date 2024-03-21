@@ -34,6 +34,7 @@ ___
 # discord keys
 MARKOV_KEY=
 MUZIKA_KEY=
+BAJBOT_KEY=
 
 # musicbot (credits to https://github.com/jagrosh/MusicBot)
 BOT_OWNER=

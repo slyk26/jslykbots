@@ -13,7 +13,7 @@ public class Ask extends LegacyCommand {
     private static final Logger logger = LoggerFactory.getLogger(Ask.class);
 
     public Ask() {
-        super("ask", "Ask Chatgpt a question", 1);
+        super("ask", "Ask Chatgpt a question", 1, 30);
     }
 
     @Override

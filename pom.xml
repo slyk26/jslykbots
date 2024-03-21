@@ -11,7 +11,7 @@
     <modules>
         <module>shared</module>
         <module>bots/markov</module>
-        <module>bots/muzika</module>
+        <module>bots/bajbot</module>
     </modules>
 
     <properties>

@@ -1,9 +1,6 @@
 package com.slykbots.markov;
 
-import com.slykbots.components.commands.Help;
-import com.slykbots.components.commands.LegacyCommand;
-import com.slykbots.components.commands.SlashCommand;
-import com.slykbots.components.commands.Toggle;
+import com.slykbots.components.commands.*;
 import com.slykbots.components.db.DB;
 import com.slykbots.components.listeners.*;
 import com.slykbots.components.settings.SettingService;
@@ -11,7 +8,6 @@ import com.slykbots.components.util.EnvLoader;
 import com.slykbots.markov.chains.MarkovService;
 import com.slykbots.markov.legacycommands.Ask;
 import com.slykbots.markov.legacycommands.Ask2;
-import com.slykbots.markov.legacycommands.Ping;
 import com.slykbots.markov.slashcommands.Info;
 import com.theokanning.openai.service.OpenAiService;
 import net.dv8tion.jda.api.JDA;
@@ -38,7 +34,7 @@ public class Markov {
 
     public static final OpenAiService os = new OpenAiService(EnvLoader.getVar("OPENAI_KEY"));
     private static final List<SlashCommand> c = new ArrayList<>(Arrays.asList(
-            new com.slykbots.components.commands.Ping(),
+            new Ping(),
             new Info(),
             new Toggle(Map.of(
                     USE_GLOBAL_KEY, "Generate with Global Tokens",
@@ -49,8 +45,7 @@ public class Markov {
 
     private static final List<LegacyCommand> l = List.of(
             new Ask(),
-            new Ask2(),
-            new Ping()
+            new Ask2()
     );
 
     static {

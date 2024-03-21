@@ -1,4 +1,4 @@
-package com.slykbots.markov.legacycommands;
+package com.slykbots.bajbot.legacycommands;
 
 import com.slykbots.components.commands.LegacyCommand;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -10,7 +10,7 @@ public class Ping extends LegacyCommand {
     private final Random r = new Random();
 
     public Ping() {
-        super("ping","`" + getLegacyKey() + "ping someone who`...\nMentions a random user. Additional Text has to be added for context", 1);
+        super("ping", "`" + LegacyCommand.getLegacyKey() + "ping someone who`...\nMentions a random user. Additional Text has to be added for context", 1, 60);
     }
 
     @Override
