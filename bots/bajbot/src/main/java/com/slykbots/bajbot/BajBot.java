@@ -2,6 +2,7 @@ package com.slykbots.bajbot;
 
 import com.slykbots.bajbot.legacycommands.Ping;
 import com.slykbots.bajbot.listeners.NotifyMirrorListener;
+import com.slykbots.bajbot.slashcommands.Confess;
 import com.slykbots.components.commands.Help;
 import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.components.commands.SlashCommand;
@@ -26,6 +27,7 @@ import java.util.List;
 
 public class BajBot {
      private static final List<SlashCommand> c = new ArrayList<>(Arrays.asList(
+             new Confess()
     ));
 
     private static final List<LegacyCommand> l = List.of(
