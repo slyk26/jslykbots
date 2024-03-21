@@ -1,6 +1,7 @@
 package com.slykbots.bajbot;
 
 import com.slykbots.bajbot.legacycommands.Ping;
+import com.slykbots.bajbot.listeners.NotifyMirrorListener;
 import com.slykbots.components.commands.Help;
 import com.slykbots.components.commands.LegacyCommand;
 import com.slykbots.components.commands.SlashCommand;
@@ -42,6 +43,7 @@ public class BajBot {
                 .addEventListeners(new ReadyListener(e -> logger.info("Started as {}!", e.getJDA().getSelfUser().getName())))
                 .addEventListeners(new SCIListener(e -> c.forEach(cmd -> cmd.onSlashCommandInteraction(e))))
                 .addEventListeners(new MessageListener(e -> l.forEach(cmd -> cmd.handleLegacyCommand(e))))
+                .addEventListeners(new NotifyMirrorListener())
                 .setActivity(Activity.customStatus("discord.gg/bajs")).build();
 
         jda.updateCommands().addCommands(c.stream().map(SlashCommand::getData).toList()).queue();
