@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class QuizListener extends TypedListener<ButtonInteractionEvent> {
-    protected static final ConcurrentMap<Long, String> contestants = new ConcurrentHashMap<>();
+    protected static ConcurrentMap<Long, String> contestants = new ConcurrentHashMap<>();
 
     public QuizListener() {
         super(c -> {
@@ -35,5 +35,9 @@ public class QuizListener extends TypedListener<ButtonInteractionEvent> {
             correct.forEach(e -> sb.append("<@").append(e.getKey()).append("> "));
         }
         return sb.toString();
+    }
+
+    public static void reset() {
+        contestants = new ConcurrentHashMap<>();
     }
 }

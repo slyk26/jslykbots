@@ -43,6 +43,7 @@ public class Quiz extends LegacyCommand {
         q.w.forEach(o -> options.add(Button.secondary(d(o), d(o))));
         Collections.shuffle(options);
 
+        QuizListener.reset();
         eb.setTitle(String.format("%s (%s)", d(q.category), d(q.difficulty)));
         eb.setDescription(d(q.q));
         e.getChannel().sendMessageEmbeds(eb.build()).addActionRow(options).queue(s -> {
