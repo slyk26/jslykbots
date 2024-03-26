@@ -69,7 +69,7 @@ public class Quiz extends LegacyCommand {
                     return f;
                 }).toList())).queue();
 
-                if(time.get() == 0) {
+                if(time.get() < 0) {
                     ses.shutdown();
                 }
             };
