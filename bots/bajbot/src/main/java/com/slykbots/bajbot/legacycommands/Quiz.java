@@ -37,7 +37,7 @@ public class Quiz extends LegacyCommand {
 
     @Override
     public void execute(MessageReceivedEvent e, List<String> args) {
-        if (!"1082034134647574618".equals(e.getAuthor().getId())) return;
+        if (Objects.requireNonNull(e.getMember()).getRoles().stream().filter(f -> "1222260841215164527".equals(f.getId())).findFirst().isEmpty()) return;
 
         ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
         AtomicInteger time = new AtomicInteger(10);
