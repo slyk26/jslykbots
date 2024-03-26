@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Quiz extends LegacyCommand {
 
@@ -34,6 +39,8 @@ public class Quiz extends LegacyCommand {
     public void execute(MessageReceivedEvent e, List<String> args) {
         if (!"1082034134647574618".equals(e.getAuthor().getId())) return;
 
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+        AtomicInteger time = new AtomicInteger(10);
         EmbedBuilder eb = new EmbedBuilder();
         var q = getQuestion();
         assert q != null;
@@ -43,16 +50,41 @@ public class Quiz extends LegacyCommand {
         q.w.forEach(o -> options.add(Button.secondary(d(o), d(o))));
         Collections.shuffle(options);
 
+        var timer = Button.of(ButtonStyle.PRIMARY, "TIMER", time + "");
+        options.addFirst(timer.asDisabled());
+
         QuizListener.reset();
         eb.setTitle(String.format("%s (%s)", d(q.category), d(q.difficulty)));
         eb.setDescription(d(q.q));
+
+        AtomicBoolean scheduled = new AtomicBoolean(false);
+
         e.getChannel().sendMessageEmbeds(eb.build()).addActionRow(options).queue(s -> {
+            Runnable countdown = () -> {
+
+                s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(f -> {
+                    if("TIMER".equals(f.getId())){
+                        return f.withLabel(time.getAndDecrement() + "");
+                    }
+                    return f;
+                }).toList())).queue();
+
+                if(time.get() == 0) {
+                    ses.shutdown();
+                }
+            };
+
+            if(!scheduled.get()) {
+                ses.scheduleAtFixedRate(countdown, 0, 1, TimeUnit.SECONDS);
+                scheduled.set(true);
+            }
+
             e.getChannel().sendMessage("TIME IS UP!").queueAfter(10, TimeUnit.SECONDS, d -> {
                 s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(b -> {
                     if (Objects.requireNonNull(b.getId()).contains("-correct"))
                         return Button.success(b.getId(), b.getLabel());
                     return Button.danger(b.getId(), b.getLabel());
-                }).toList()).asDisabled()).queue();
+                }).skip(1).toList()).asDisabled()).queue();
                 e.getChannel().sendMessage("Correct are: " + QuizListener.mapWinners()).queue();
 
             });

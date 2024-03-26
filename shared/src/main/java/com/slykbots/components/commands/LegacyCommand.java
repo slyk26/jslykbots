@@ -6,12 +6,15 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public abstract class LegacyCommand {
 
-    private static final Map<String, LocalDateTime> cooldowns = new HashMap<>();
+    private static final ConcurrentHashMap<String, LocalDateTime> cooldowns = new ConcurrentHashMap<>();
 
     private final String name;
     private final String description;
