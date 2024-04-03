@@ -14,7 +14,7 @@ public class Ask2 extends LegacyCommand {
     private static final Logger logger = LoggerFactory.getLogger(Ask2.class);
 
     public Ask2() {
-        super("ask2", "Ask Chatgpt a Question (uncensored)", 1, 30);
+        super("ask2", "Ask Chatgpt a Question (uncensored)", 1, 30000);
     }
 
     @Override

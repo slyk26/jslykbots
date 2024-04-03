@@ -21,7 +21,7 @@ public class SettingDao extends Dao<Setting, ReadData> {
     @Override
     public void update(Setting setting) {
         String sql = "insert into bot_settings(guild_id, setting, val) values(?,?,?) on conflict (guild_id, setting) do update set val = ?";
-        try (var c = DB.connect(); var stmt = Objects.requireNonNull(c).prepareStatement(sql)) {
+        try (var c = DB.connect(); var stmt = Objects.requireNonNull(c, "[SettingsDao] Connection is null").prepareStatement(sql)) {
             stmt.setString(1, setting.getGuildId());
             stmt.setString(2, setting.getKey());
             stmt.setString(3, setting.getValue());

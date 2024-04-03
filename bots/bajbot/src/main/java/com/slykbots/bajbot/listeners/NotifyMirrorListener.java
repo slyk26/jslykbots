@@ -8,7 +8,10 @@ import java.util.Objects;
 public class NotifyMirrorListener extends MessageListener {
     public NotifyMirrorListener() {
         super(c -> {
-            if("1044050359586394192".equals(Objects.requireNonNull(c.getMember()).getId())){
+            var m = c.getMember();
+            if(m == null) return;
+
+            if("1044050359586394192".equals(c.getMember().getId())){
                 var msg = c.getMessage().getContentRaw();
                 var embed = c.getMessage().getEmbeds().getFirst();
                 var button = c.getMessage().getActionRows().getFirst().getActionComponents();

@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.slykbots.components.util.Helper.timed;
 
 public class Quiz extends LegacyCommand {
 
@@ -39,7 +39,6 @@ public class Quiz extends LegacyCommand {
     public void execute(MessageReceivedEvent e, List<String> args) {
         if (Objects.requireNonNull(e.getMember()).getRoles().stream().filter(f -> "1222260841215164527".equals(f.getId())).findFirst().isEmpty()) return;
 
-        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
         AtomicInteger time = new AtomicInteger(10);
         EmbedBuilder eb = new EmbedBuilder();
         var q = getQuestion();
@@ -60,22 +59,18 @@ public class Quiz extends LegacyCommand {
         AtomicBoolean scheduled = new AtomicBoolean(false);
 
         e.getChannel().sendMessageEmbeds(eb.build()).addActionRow(options).queue(s -> {
-            Runnable countdown = () -> {
-
-                s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(f -> {
-                    if("TIMER".equals(f.getId())){
-                        return f.withLabel(time.getAndDecrement() + "");
-                    }
-                    return f;
-                }).toList())).queue();
-
-                if(time.get() < 0) {
-                    ses.shutdown();
-                }
-            };
-
             if(!scheduled.get()) {
-                ses.scheduleAtFixedRate(countdown, 0, 1, TimeUnit.SECONDS);
+                timed( () ->  {
+                    if(time.get() == 0) {
+                        return;
+                    }
+                    s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(f -> {
+                        if("TIMER".equals(f.getId())){
+                            return f.withLabel(time.getAndDecrement() + "");
+                        }
+                        return f;
+                    }).toList())).queue();
+                }, 1000);
                 scheduled.set(true);
             }
 

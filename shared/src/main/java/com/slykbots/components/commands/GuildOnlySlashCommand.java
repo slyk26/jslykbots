@@ -21,6 +21,6 @@ public abstract class GuildOnlySlashCommand extends SlashCommand {
     }
 
     protected String getGuildId(SlashCommandInteraction e) {
-        return Objects.requireNonNull(e.getGuild()).getId();
+        return Objects.requireNonNull(e.getGuild(), "[guildOnlyGuild] Guild is null").getId();
     }
 }

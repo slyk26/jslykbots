@@ -16,9 +16,9 @@ public class QuizListener extends TypedListener<ButtonInteractionEvent> {
             var button = c.getButton();
 
             if (contestants.put(Objects.requireNonNull(submitter).getIdLong(), Objects.requireNonNull(button.getId())) == null) {
-                c.getChannel().sendMessage(Objects.requireNonNull(c.getMember()).getEffectiveName() + " submitted!").queue();
+                c.getChannel().sendMessage(Objects.requireNonNull(c.getMember(), "[quiz submit] submitter is null").getEffectiveName() + " submitted!").queue();
             } else {
-                c.getChannel().sendMessage(Objects.requireNonNull(c.getMember()).getEffectiveName() + " changed their mind!").queue();
+                c.getChannel().sendMessage(Objects.requireNonNull(c.getMember(), "[quiz submit] changer is null").getEffectiveName() + " changed their mind!").queue();
             }
             c.deferEdit().queue();
         }, ButtonInteractionEvent.class);

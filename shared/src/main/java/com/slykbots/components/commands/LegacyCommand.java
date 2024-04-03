@@ -4,36 +4,44 @@ import com.slykbots.components.util.EnvLoader;
 import lombok.Getter;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.slykbots.components.util.Helper.timed;
+
 @Getter
 public abstract class LegacyCommand {
-
-    private static final ConcurrentHashMap<String, LocalDateTime> cooldowns = new ConcurrentHashMap<>();
+    protected static final ConcurrentHashMap<Long, Integer> cooldown = new ConcurrentHashMap<>();
 
     private final String name;
     private final String description;
     private final int pLength;
-    private final Integer cooldownSeconds;
+    private final Integer ms;
 
 
     protected LegacyCommand(String name, String desc, int parameterLength) {
         this.name = name;
         this.description = desc;
         this.pLength = parameterLength;
-        this.cooldownSeconds = null;
+        this.ms = null;
     }
 
-    protected LegacyCommand(String name, String description, int pLength, int cdSec) {
+    protected LegacyCommand(String name, String description, int pLength, int ms) {
         this.name = name;
         this.description = description;
         this.pLength = pLength;
-        this.cooldownSeconds = cdSec;
+        this.ms = ms;
+
+        timed(() -> cooldown.forEach((id, time) -> {
+            var t = time - 1;
+            if (t == 0) {
+                cooldown.remove(id);
+            } else {
+                cooldown.put(id, t);
+            }
+        }), ms);
     }
 
     public static String getLegacyKey() {
@@ -49,22 +57,14 @@ public abstract class LegacyCommand {
 
     public void handleLegacyCommand(MessageReceivedEvent e) {
         List<String> command = Arrays.asList(e.getMessage().getContentRaw().split(" ", 2));
+        var userId = Objects.requireNonNull(e.getMember(), "[handleLegacyCommand] Member is null").getIdLong();
         if (this.validate(command.getFirst(), command.size())) {
-            if (this.cooldownSeconds != null) {
-                var user = Objects.requireNonNull(e.getMember()).getId();
-                var done = cooldowns.get(user);
 
-                if (done != null) {
-                    if (done.isAfter(LocalDateTime.now())) {
-                        e.getMessage().reply(String.format("You can use that command in %ss again.", ChronoUnit.SECONDS.between(LocalDateTime.now(), done))).queue();
-                        return;
-                    } else {
-                        cooldowns.remove(user);
-                    }
-                } else {
-                    cooldowns.put(user, LocalDateTime.now().plusSeconds(this.cooldownSeconds));
-                }
+            if (cooldown.putIfAbsent(userId, 10) != null) {
+                e.getMessage().reply("you can ping in " + cooldown.get(userId) + "s again").queue();
+                return;
             }
+
             this.execute(e, command.subList(1, command.size()));
         }
     }

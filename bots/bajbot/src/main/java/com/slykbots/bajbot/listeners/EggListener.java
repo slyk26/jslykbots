@@ -7,7 +7,7 @@ public class EggListener extends MessageListener {
     public EggListener() {
         super(c -> {
            if("337700906751754246".equals(c.getMessage().getAuthor().getId())){
-               c.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDFF3\uFE0F\u200D⚧\uFE0F")).queue(null, e -> {});
+               c.getMessage().addReaction(Emoji.fromUnicode("\uD83C\uDFF3️\u200D⚧️")).queue(null, e -> {});
                c.getMessage().addReaction(Emoji.fromUnicode("\uD83E\uDD5A")).queue(null, e -> {});
             }
         });

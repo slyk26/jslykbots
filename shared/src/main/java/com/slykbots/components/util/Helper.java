@@ -1,12 +1,8 @@
 package com.slykbots.components.util;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Helper {
 
@@ -35,13 +31,12 @@ public class Helper {
         return m.isMentioned(msg.getJDA().getSelfUser(), Message.MentionType.USER);
     }
 
-    public static List<Member> getMembersOfVoiceChannel(Guild g, String channel) {
-        return Objects.requireNonNull(Objects.requireNonNull(g.getVoiceChannelById(channel)).getMembers());
+    public static void timed(Runnable r, int ms){
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+               r.run();
+            }
+        }, new Date(), ms);
     }
-
-    public static boolean isInChannel(Member m, Guild g, String channel) {
-        var members = Helper.getMembersOfVoiceChannel(g, channel);
-        return members.stream().anyMatch(x -> x.getId().equals(m.getId()));
-    }
-
 }
