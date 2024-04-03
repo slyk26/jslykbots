@@ -39,7 +39,7 @@ public abstract class LegacyCommand {
 
         timed(() -> cooldown.forEach((id, time) -> {
             var t = time - 1;
-            logger.info("{}", t);
+            logger.debug("cd for {} {}s", name, t);
             if (t == 0) {
                 cooldown.remove(id);
             } else {
