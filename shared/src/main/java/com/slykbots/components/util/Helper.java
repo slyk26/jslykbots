@@ -31,12 +31,12 @@ public class Helper {
         return m.isMentioned(msg.getJDA().getSelfUser(), Message.MentionType.USER);
     }
 
-    public static void timed(Runnable r, int ms){
+    public static void timed(Runnable r, int s){
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                r.run();
             }
-        }, new Date(), ms);
+        }, new Date(), s * 100L);
     }
 }

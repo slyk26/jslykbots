@@ -10,7 +10,7 @@ public class Ping extends LegacyCommand {
     private final Random r = new Random();
 
     public Ping() {
-        super("ping", "`" + LegacyCommand.getLegacyKey() + "ping someone who`...\nMentions a random user. Additional Text has to be added for context", 1, 1000);
+        super("ping", "`" + LegacyCommand.getLegacyKey() + "ping someone who`...\nMentions a random user. Additional Text has to be added for context", 1, 10);
     }
 
     @Override
