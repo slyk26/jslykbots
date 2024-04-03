@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.slykbots.components.util.Helper.timed;
@@ -61,7 +60,14 @@ public abstract class LegacyCommand {
 
     public void handleLegacyCommand(MessageReceivedEvent e) {
         List<String> command = Arrays.asList(e.getMessage().getContentRaw().split(" ", 2));
-        var userId = Objects.requireNonNull(e.getMember(), "[handleLegacyCommand] Member is null").getIdLong();
+        var member = e.getMember();
+
+        if(member == null){
+            logger.warn("unable to get Message -> too fast (auto-)deleted");
+            return;
+        }
+
+        var userId = member.getIdLong();
         if (this.validate(command.getFirst(), command.size())) {
 
             if(this.s != null && (cooldown.putIfAbsent(userId, this.s) != null)) {
