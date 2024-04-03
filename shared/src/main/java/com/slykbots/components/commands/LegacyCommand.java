@@ -13,7 +13,7 @@ import static com.slykbots.components.util.Helper.timed;
 
 @Getter
 public abstract class LegacyCommand {
-    protected static final ConcurrentHashMap<Long, Integer> cooldown = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<Long, Integer> cooldown = new ConcurrentHashMap<>();
 
     private final String name;
     private final String description;
