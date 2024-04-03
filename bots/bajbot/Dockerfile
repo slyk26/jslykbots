@@ -2,10 +2,10 @@ FROM maven:3.9.6-amazoncorretto-21-debian-bookworm AS build
 ENV HOME=/usr/app
 WORKDIR $HOME
 
-ADD ../../pom.xml $HOME/pom.xml
-RUN  sed -i '/<modules>/,/<\/modules>/c\<modules>\n<module>shared</module>\n<module>bots/bajbot</module>\n</modules>' $HOME/pom.xml
-ADD ../../shared/pom.xml $HOME/shared/pom.xml
-ADD ../../bots/bajbot/pom.xml $HOME/bots/bajbot/pom.xml
+ADD bajbot/pom.xml $HOME/pom.xml
+RUN sed -i '/<modules>/,/<\/modules>/c\<modules>\n<module>shared</module>\n<module>bots/bajbot</module>\n</modules>' $HOME/pom.xml
+ADD shared/pom.xml $HOME/shared/pom.xml
+ADD bots/bajbot/pom.xml $HOME/bots/bajbot/pom.xml
 
 RUN mvn -pl shared verify
 ADD shared $HOME/shared
