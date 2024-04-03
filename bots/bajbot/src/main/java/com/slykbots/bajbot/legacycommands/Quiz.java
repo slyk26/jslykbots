@@ -37,7 +37,7 @@ public class Quiz extends LegacyCommand {
 
     @Override
     public void execute(MessageReceivedEvent e, List<String> args) {
-        //if (Objects.requireNonNull(e.getMember()).getRoles().stream().filter(f -> "1222260841215164527".equals(f.getId())).findFirst().isEmpty()) return;
+        if (Objects.requireNonNull(e.getMember()).getRoles().stream().filter(f -> "1222260841215164527".equals(f.getId())).findFirst().isEmpty()) return;
 
         AtomicInteger time = new AtomicInteger(10);
         EmbedBuilder eb = new EmbedBuilder();
