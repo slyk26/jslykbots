@@ -72,7 +72,7 @@ public abstract class LegacyCommand {
         if (this.validate(command.getFirst(), command.size())) {
 
             if(this.s != null && (cooldown.putIfAbsent(userId, this.s) != null)) {
-                    e.getMessage().reply("you can ping in " + cooldown.get(userId) + "s again").queue();
+                    e.getMessage().reply("you can use that in " + cooldown.get(userId) + "s again").queue();
                     return;
             }
 

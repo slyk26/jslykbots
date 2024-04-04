@@ -13,7 +13,10 @@ public class WhatListener extends MessageListener {
 
             if (Arrays.stream(txt).map(String::toLowerCase).anyMatch(t ->
                     ("que".equals(t) ||
-                            (t.contains("what") && txt.length < 3))))
+                            "wut".equals(t) ||
+                            ("vad".equals(t) && txt.length == 1) ||
+                            (t.contains("was") && txt.length == 1)) ||
+                            (t.contains("what") && txt.length < 3)))
                 msg.addReaction(Emoji.fromCustom("chickenbutt", 1204210992377106502L, false)).complete();
 
         });
