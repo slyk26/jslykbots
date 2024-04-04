@@ -4,6 +4,7 @@ import com.slykbots.bajbot.legacycommands.Ping;
 import com.slykbots.bajbot.legacycommands.Quiz;
 import com.slykbots.bajbot.listeners.NotifyMirrorListener;
 import com.slykbots.bajbot.listeners.QuizListener;
+import com.slykbots.bajbot.listeners.WhatListener;
 import com.slykbots.bajbot.slashcommands.Confess;
 import com.slykbots.components.commands.Help;
 import com.slykbots.components.commands.LegacyCommand;
@@ -53,6 +54,7 @@ public class BajBot {
                 .addEventListeners(new MessageListener(e -> l.forEach(cmd -> cmd.handleLegacyCommand(e))))
                 //.addEventListeners(new EggListener())
                 .addEventListeners(new QuizListener())
+                .addEventListeners(new WhatListener())
                 .addEventListeners(new NotifyMirrorListener())
                 .setActivity(Activity.customStatus("discord.gg/bajs")).build();
 

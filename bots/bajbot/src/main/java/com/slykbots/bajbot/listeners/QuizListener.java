@@ -15,9 +15,16 @@ public class QuizListener extends TypedListener<ButtonInteractionEvent> {
             var submitter = c.getMember();
             var button = c.getButton();
 
-            contestants.put(Objects.requireNonNull(submitter).getIdLong(), Objects.requireNonNull(button.getId()));
-            c.deferEdit().queue();
+            if (contestants.put(Objects.requireNonNull(submitter).getIdLong(), Objects.requireNonNull(button.getId())) == null) {
+                notify(c, "Submitted!");
+            } else {
+                notify(c, "Submission updated!");
+            }
         }, ButtonInteractionEvent.class);
+    }
+
+    private static void notify(ButtonInteractionEvent e, String msg){
+        e.getInteraction().reply(msg).setEphemeral(true).queue();
     }
 
     public static String mapWinners() {

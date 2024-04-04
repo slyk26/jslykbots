@@ -40,7 +40,7 @@ public class Quiz extends LegacyCommand {
     public void execute(MessageReceivedEvent e, List<String> args) {
         if (Objects.requireNonNull(e.getMember()).getRoles().stream().filter(f -> "1222260841215164527".equals(f.getId())).findFirst().isEmpty()) return;
 
-        int thinkTime = 15;
+        int thinkTime = 11;
         AtomicBoolean active = new AtomicBoolean(false);
         AtomicInteger time = new AtomicInteger(thinkTime);
         var q = getQuestion();
