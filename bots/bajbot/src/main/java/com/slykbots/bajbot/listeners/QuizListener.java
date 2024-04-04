@@ -15,11 +15,7 @@ public class QuizListener extends TypedListener<ButtonInteractionEvent> {
             var submitter = c.getMember();
             var button = c.getButton();
 
-            if (contestants.put(Objects.requireNonNull(submitter).getIdLong(), Objects.requireNonNull(button.getId())) == null) {
-                c.getChannel().sendMessage(Objects.requireNonNull(c.getMember(), "[quiz submit] submitter is null").getEffectiveName() + " submitted!").queue();
-            } else {
-                c.getChannel().sendMessage(Objects.requireNonNull(c.getMember(), "[quiz submit] changer is null").getEffectiveName() + " changed their mind!").queue();
-            }
+            contestants.put(Objects.requireNonNull(submitter).getIdLong(), Objects.requireNonNull(button.getId()));
             c.deferEdit().queue();
         }, ButtonInteractionEvent.class);
     }
@@ -32,9 +28,19 @@ public class QuizListener extends TypedListener<ButtonInteractionEvent> {
         if (correct.isEmpty()) {
             sb.append("None! :(");
         } else {
-            correct.forEach(e -> sb.append("<@").append(e.getKey()).append("> "));
+            correct.forEach(e -> sb.append(makePing(e.getKey())));
         }
         return sb.toString();
+    }
+
+    public static String mapSubmitters() {
+        StringBuilder sb = new StringBuilder();
+        contestants.keySet().forEach(k -> sb.append(makePing(k)));
+        return sb.toString();
+    }
+
+    private static String makePing(Long id) {
+        return "<@" + id + "> ";
     }
 
     public static void reset() {

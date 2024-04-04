@@ -3,6 +3,7 @@ package com.slykbots.components.commands;
 import com.slykbots.components.util.EnvLoader;
 import lombok.Getter;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,14 +57,14 @@ public abstract class LegacyCommand {
         return c.equals(cmd) && length == this.pLength + 1;
     }
 
-    public abstract void execute(MessageReceivedEvent e, List<String> args);
+    public abstract void execute(MessageReceivedEvent e, List<String> args) throws InsufficientPermissionException;
 
     public void handleLegacyCommand(MessageReceivedEvent e) {
         List<String> command = Arrays.asList(e.getMessage().getContentRaw().split(" ", 2));
         var member = e.getMember();
 
         if(member == null){
-            logger.warn("unable to get Message -> too fast (auto-)deleted");
+            logger.debug("unable to get Message -> too fast (auto-)deleted");
             return;
         }
 
@@ -73,7 +74,6 @@ public abstract class LegacyCommand {
             if(this.s != null && (cooldown.putIfAbsent(userId, this.s) != null)) {
                     e.getMessage().reply("you can ping in " + cooldown.get(userId) + "s again").queue();
                     return;
-
             }
 
             this.execute(e, command.subList(1, command.size()));

@@ -31,11 +31,26 @@ public class Helper {
         return m.isMentioned(msg.getJDA().getSelfUser(), Message.MentionType.USER);
     }
 
-    public static void timed(Runnable r, int s){
+    public static void timed(Runnable r, int s) {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-               r.run();
+                r.run();
+            }
+        }, new Date(), s * 100L);
+    }
+
+    public static void doTimes(Runnable r, int times, int s) {
+        var timer = new Timer();
+        final int[] count = {times};
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                r.run();
+                count[0] -=1;
+                if(count[0] == -1) timer.cancel();
+
             }
         }, new Date(), s * 100L);
     }

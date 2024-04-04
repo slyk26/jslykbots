@@ -7,6 +7,8 @@ import com.slykbots.components.commands.LegacyCommand;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -21,11 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.slykbots.components.util.Helper.timed;
+import static com.slykbots.components.util.Helper.doTimes;
 
 public class Quiz extends LegacyCommand {
 
@@ -39,51 +40,61 @@ public class Quiz extends LegacyCommand {
     public void execute(MessageReceivedEvent e, List<String> args) {
         if (Objects.requireNonNull(e.getMember()).getRoles().stream().filter(f -> "1222260841215164527".equals(f.getId())).findFirst().isEmpty()) return;
 
-        AtomicInteger time = new AtomicInteger(10);
-        EmbedBuilder eb = new EmbedBuilder();
+        int thinkTime = 15;
+        AtomicBoolean active = new AtomicBoolean(false);
+        AtomicInteger time = new AtomicInteger(thinkTime);
         var q = getQuestion();
-        assert q != null;
+        if (q == null) return;
 
+        QuizListener.reset();
+
+        e.getChannel().sendMessageEmbeds(createEmbed(q)).addActionRow(createButtons(q, thinkTime)).queue(s -> {
+            if (!active.get()) {
+                doTimes(() -> {
+                    if (time.get() == 0) {
+                        disableButtons(s);
+                        e.getChannel().sendMessage("Participants: " + QuizListener.mapSubmitters() + "\nCorrect: " + QuizListener.mapWinners()).queue();
+                        return;
+                    }
+                    countDown(s, time);
+                }, thinkTime, thinkTime);
+                active.set(true);
+            }
+        });
+    }
+
+    private void countDown(Message s, AtomicInteger time) {
+        s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(f -> {
+            if ("TIMER".equals(f.getId())) {
+                return f.withLabel(time.getAndDecrement() + "");
+            }
+            return f;
+        }).toList())).queue();
+    }
+
+    private void disableButtons(Message s){
+        s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(b -> {
+            if (Objects.requireNonNull(b.getId()).contains("-correct"))
+                return Button.success(b.getId(), b.getLabel());
+            return Button.danger(b.getId(), b.getLabel());
+        }).skip(1).toList()).asDisabled()).queue();
+    }
+
+    private List<Button> createButtons(Response.Question q, int time) {
         var options = new ArrayList<Button>();
         options.add(Button.secondary(d(q.c) + "-correct", d(q.c)));
         q.w.forEach(o -> options.add(Button.secondary(d(o), d(o))));
         Collections.shuffle(options);
-
         var timer = Button.of(ButtonStyle.PRIMARY, "TIMER", time + "");
         options.addFirst(timer.asDisabled());
+        return options;
+    }
 
-        QuizListener.reset();
+    private MessageEmbed createEmbed(Response.Question q) {
+        EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(String.format("%s (%s)", d(q.category), d(q.difficulty)));
         eb.setDescription(d(q.q));
-
-        AtomicBoolean scheduled = new AtomicBoolean(false);
-
-        e.getChannel().sendMessageEmbeds(eb.build()).addActionRow(options).queue(s -> {
-            if(!scheduled.get()) {
-                timed( () ->  {
-                    if(time.get() == 0) {
-                        return;
-                    }
-                    s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(f -> {
-                        if("TIMER".equals(f.getId())){
-                            return f.withLabel(time.getAndDecrement() + "");
-                        }
-                        return f;
-                    }).toList())).queue();
-                }, 10);
-                scheduled.set(true);
-            }
-
-            e.getChannel().sendMessage("TIME IS UP!").queueAfter(10, TimeUnit.SECONDS, d -> {
-                s.editMessageComponents(ActionRow.of(s.getActionRows().getFirst().getComponents().stream().map(c -> (Button) c).map(b -> {
-                    if (Objects.requireNonNull(b.getId()).contains("-correct"))
-                        return Button.success(b.getId(), b.getLabel());
-                    return Button.danger(b.getId(), b.getLabel());
-                }).skip(1).toList()).asDisabled()).queue();
-                e.getChannel().sendMessage("Correct are: " + QuizListener.mapWinners()).queue();
-
-            });
-        });
+        return eb.build();
     }
 
     private String d(String s) {

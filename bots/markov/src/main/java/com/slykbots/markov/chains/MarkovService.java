@@ -4,7 +4,6 @@ import com.slykbots.components.util.EnvLoader;
 import com.slykbots.components.util.Helper;
 import com.slykbots.markov.Markov;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +33,12 @@ public class MarkovService {
         if (e.isFromGuild() && !e.getAuthor().isBot() && !Helper.isBotMentioned(e.getMessage()))
             this.destructMessage(msg, server);
 
-        if ((Helper.isBotMentioned(e.getMessage()) || r.nextInt(100 - 1) + 1 <= 3) && e.isFromGuild() && !e.getAuthor().isBot() && "true".equals(Markov.ss.getSetting(server, Markov.GENERATE_KEY))){
-            try {
-                e.getChannel().sendMessage(this.generateMessage(server)).queue();
-            }catch (InsufficientPermissionException ignore){
-                logger.warn("no permissions in channel [{}]", e.getChannel().getId());
-            }
+        if (e.getChannel().canTalk() &&
+                (Helper.isBotMentioned(e.getMessage()) || r.nextInt(100 - 1) + 1 <= 3)
+                && e.isFromGuild()
+                && !e.getAuthor().isBot()
+                && "true".equals(Markov.ss.getSetting(server, Markov.GENERATE_KEY))) {
+            e.getChannel().sendMessage(this.generateMessage(server)).queue();
         }
 
 
