@@ -45,7 +45,7 @@ public abstract class LegacyCommand {
             } else {
                 cooldown.put(id, t);
             }
-        }), s);
+        }), 10);
     }
 
     public static String getLegacyKey() {
@@ -63,7 +63,7 @@ public abstract class LegacyCommand {
         List<String> command = Arrays.asList(e.getMessage().getContentRaw().split(" ", 2));
         var member = e.getMember();
 
-        if(member == null){
+        if (member == null) {
             logger.debug("unable to get Message -> too fast (auto-)deleted");
             return;
         }
@@ -71,9 +71,9 @@ public abstract class LegacyCommand {
         var userId = member.getIdLong();
         if (this.validate(command.getFirst(), command.size())) {
 
-            if(this.s != null && (cooldown.putIfAbsent(userId, this.s) != null)) {
-                    e.getMessage().reply("you can use that in " + cooldown.get(userId) + "s again").queue();
-                    return;
+            if (this.s != null && (cooldown.putIfAbsent(userId, this.s) != null)) {
+                e.getMessage().reply("you can use that in " + cooldown.get(userId) + "s again").queue();
+                return;
             }
 
             this.execute(e, command.subList(1, command.size()));
