@@ -2,6 +2,7 @@ package com.slykbots.bajbot;
 
 import com.slykbots.bajbot.legacycommands.Ping;
 import com.slykbots.bajbot.legacycommands.Quiz;
+import com.slykbots.bajbot.listeners.Greeter;
 import com.slykbots.bajbot.listeners.NotifyMirrorListener;
 import com.slykbots.bajbot.listeners.QuizListener;
 import com.slykbots.bajbot.listeners.WhatListener;
@@ -55,6 +56,7 @@ public class BajBot {
                 //.addEventListeners(new EggListener())
                 .addEventListeners(new QuizListener())
                 .addEventListeners(new WhatListener())
+                .addEventListeners(new Greeter())
                 .addEventListeners(new NotifyMirrorListener())
                 .setActivity(Activity.customStatus("discord.gg/bajs")).build();
 
