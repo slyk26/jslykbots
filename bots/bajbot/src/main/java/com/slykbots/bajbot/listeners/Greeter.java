@@ -9,6 +9,9 @@ public class Greeter extends MessageListener {
             var msg = c.getMessage();
             var ret = switch (msg.getContentDisplay()) {
                 case "selam" -> "Aleyküm Selam";
+                case "salem" -> "Aleyküm Selam";
+                case "Salem" -> "Aleyküm Selam";
+                case "Selam" -> "Aleyküm Selam";
                 case "dere" -> "dere oida";
                 case "yo" -> "sup";
                 default -> "";
