@@ -11,8 +11,11 @@ public class Greeter extends MessageListener {
                 case "selam" -> "Aleyküm Selam";
                 case "dere" -> "dere oida";
                 case "yo" -> "sup";
-                default -> "";
+                default -> null;
             };
+
+            if (ret == null) return;
+
             chan.sendMessage(ret).queue();
         });
     }
