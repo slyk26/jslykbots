@@ -31,7 +31,7 @@ public class Avatar extends GuildOnlySlashCommand {
         var b = new EmbedBuilder();
 
         if(url != null) {
-            b.setImage(url);
+            b.setImage(url + "?size=1024");
         } else {
             b.setDescription("user has no pfp");
         }
